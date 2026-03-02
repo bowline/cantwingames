@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const PIXEL_FONT = `"Press Start 2P", monospace`;
@@ -117,59 +119,106 @@ function DeskScene({ issuesIgnored, issuesResponded }) {
       <rect x="60" y="106" width="50" height="8" fill="#c9a84c" />
       <text x="85" y="113" textAnchor="middle" fill="#3a2a1a" fontSize="5" fontFamily={PIXEL_FONT}>SENATOR</text>
       
-      {/* Paper stack on desk - grows with ignored issues */}
-      {[...Array(Math.min(issuesIgnored, 12))].map((_, i) => {
-        const baseX = 220;
-        const xJitter = ((i * 7 + 3) % 5) - 2;
-        const rotation = ((i * 13 + 5) % 15) - 7;
+      {/* Paper stack on desk - unlimited growth */}
+      {[...Array(issuesIgnored)].map((_, i) => {
+        // First 12: neat-ish stack on right side of desk
+        if (i < 12) {
+          const baseX = 220;
+          const xJitter = ((i * 7 + 3) % 5) - 2;
+          const rotation = ((i * 13 + 5) % 15) - 7;
+          return (
+            <g key={`paper${i}`}>
+              <rect 
+                x={baseX + xJitter} 
+                y={104 - i * 2.5} 
+                width="28" 
+                height="14" 
+                fill={i % 3 === 0 ? "#f0e8d8" : i % 3 === 1 ? "#e8e0d0" : "#f5edd5"} 
+                stroke="#ccc0a8"
+                strokeWidth="0.5"
+                transform={`rotate(${rotation}, ${baseX + 14 + xJitter}, ${111 - i * 2.5})`}
+              />
+              <rect 
+                x={baseX + xJitter + 4} 
+                y={104 - i * 2.5 + 4} 
+                width="16" 
+                height="1" 
+                fill="#bbaa88" 
+                opacity="0.5"
+                transform={`rotate(${rotation}, ${baseX + 14 + xJitter}, ${111 - i * 2.5})`}
+              />
+            </g>
+          );
+        }
+        // 12-18: papers start falling on floor right side
+        if (i < 18) {
+          const fi = i - 12;
+          const fx = 200 + fi * 18 + ((fi * 17) % 11);
+          const fy = 148 + ((fi * 9) % 12);
+          return (
+            <rect 
+              key={`paper${i}`}
+              x={fx} y={fy} width="22" height="14"
+              fill={fi % 2 === 0 ? "#e8e0d0" : "#f0e8d8"}
+              opacity="0.8"
+              transform={`rotate(${((fi * 29) % 50) - 25}, ${fx + 11}, ${fy + 7})`}
+            />
+          );
+        }
+        // 18-26: second stack grows on left side of desk
+        if (i < 26) {
+          const si = i - 18;
+          const baseX = 48;
+          const xJitter = ((si * 11 + 2) % 5) - 2;
+          const rotation = ((si * 17 + 3) % 15) - 7;
+          return (
+            <g key={`paper${i}`}>
+              <rect 
+                x={baseX + xJitter} 
+                y={104 - si * 2.5} 
+                width="26" 
+                height="14" 
+                fill={si % 3 === 0 ? "#f5edd5" : si % 3 === 1 ? "#f0e8d8" : "#e8e0d0"} 
+                stroke="#ccc0a8"
+                strokeWidth="0.5"
+                transform={`rotate(${rotation}, ${baseX + 13 + xJitter}, ${111 - si * 2.5})`}
+              />
+            </g>
+          );
+        }
+        // 26-34: papers on floor left side
+        if (i < 34) {
+          const fi = i - 26;
+          const fx = 10 + fi * 20 + ((fi * 13) % 9);
+          const fy = 145 + ((fi * 11) % 14);
+          return (
+            <rect 
+              key={`paper${i}`}
+              x={fx} y={fy} width="20" height="12"
+              fill={fi % 3 === 0 ? "#e8e0d0" : fi % 3 === 1 ? "#f5edd5" : "#f0e8d8"}
+              opacity="0.7"
+              transform={`rotate(${((fi * 31) % 60) - 30}, ${fx + 10}, ${fy + 6})`}
+            />
+          );
+        }
+        // 34+: papers literally everywhere - covering walls, window, flag
+        const ci = i - 34;
+        const positions = [
+          { x: 30 + (ci * 37) % 260, y: 20 + (ci * 23) % 80 },
+          { x: 10 + (ci * 43) % 280, y: 60 + (ci * 31) % 60 },
+          { x: 50 + (ci * 53) % 220, y: 10 + (ci * 41) % 100 },
+        ];
+        const pos = positions[ci % 3];
         return (
-          <g key={`paper${i}`}>
-            <rect 
-              x={baseX + xJitter} 
-              y={104 - i * 2.5} 
-              width="28" 
-              height="14" 
-              fill={i % 3 === 0 ? "#f0e8d8" : i % 3 === 1 ? "#e8e0d0" : "#f5edd5"} 
-              stroke="#ccc0a8"
-              strokeWidth="0.5"
-              transform={`rotate(${rotation}, ${baseX + 14 + xJitter}, ${111 - i * 2.5})`}
-            />
-            {/* Little text lines on paper */}
-            <rect 
-              x={baseX + xJitter + 4} 
-              y={104 - i * 2.5 + 4} 
-              width="16" 
-              height="1" 
-              fill="#bbaa88" 
-              opacity="0.5"
-              transform={`rotate(${rotation}, ${baseX + 14 + xJitter}, ${111 - i * 2.5})`}
-            />
-            <rect 
-              x={baseX + xJitter + 4} 
-              y={104 - i * 2.5 + 7} 
-              width="12" 
-              height="1" 
-              fill="#bbaa88" 
-              opacity="0.5"
-              transform={`rotate(${rotation}, ${baseX + 14 + xJitter}, ${111 - i * 2.5})`}
-            />
-          </g>
+          <rect 
+            key={`paper${i}`}
+            x={pos.x} y={pos.y} width="24" height="16"
+            fill={ci % 4 === 0 ? "#f0e8d8" : ci % 4 === 1 ? "#e8e0d0" : ci % 4 === 2 ? "#f5edd5" : "#efe5cc"}
+            opacity={0.85}
+            transform={`rotate(${((ci * 37) % 70) - 35}, ${pos.x + 12}, ${pos.y + 8})`}
+          />
         );
       })}
-      
-      {/* Papers on floor if > 8 ignored */}
-      {issuesIgnored > 8 && [...Array(Math.min(issuesIgnored - 8, 6))].map((_, i) => (
-        <rect 
-          key={`floor${i}`}
-          x={240 + i * 8 + ((i * 11) % 5)} 
-          y={148 + ((i * 7) % 8)} 
-          width="18" 
-          height="12" 
-          fill={i % 2 === 0 ? "#e8e0d0" : "#f0e8d8"}
-          opacity="0.7"
-          transform={`rotate(${((i * 23) % 40) - 20}, ${249 + i * 8}, ${154})`}
-        />
-      ))}
       
       {/* Coffee mug */}
       <rect x="70" y="100" width="12" height="14" fill="#cc6644" rx="1" />
@@ -659,9 +708,6 @@ export default function EarnYourSeat() {
       flexDirection: "column",
       boxShadow: "0 0 40px rgba(0,0,0,0.8)",
     }}>
-      {/* Google Font */}
-      <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
-      
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(8px); }
