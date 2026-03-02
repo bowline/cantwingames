@@ -396,7 +396,7 @@ function ResponseMessage({ text, onDone }) {
 }
 
 // Title screen
-function TitleScreen({ onStart }) {
+function TitleScreen({ onStart, onShare }) {
   return (
     <div style={{
       display: "flex",
@@ -444,10 +444,15 @@ function TitleScreen({ onStart }) {
         <span style={{ color: "#aa6633" }}>TRY TO REPRESENT YOUR VOTERS.</span>
       </div>
       
-      <PixelButton variant="default" onClick={onStart} style={{ fontSize: "12px", padding: "12px 32px" }}>
-        ▶ START
-      </PixelButton>
-      
+      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        <PixelButton variant="default" onClick={onStart} style={{ fontSize: "12px", padding: "12px 32px" }}>
+          ▶ START
+        </PixelButton>
+        <PixelButton variant="cta" onClick={onShare} style={{ fontSize: "9px", padding: "12px 16px" }}>
+          SHARE
+        </PixelButton>
+      </div>
+
       <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#555566", animation: "blink 1.5s infinite" }}>
         PRESS START
       </div>
@@ -684,11 +689,12 @@ export default function EarnYourSeat() {
   }, [nextIssue]);
   
   const handleShare = useCallback(() => {
-    const text = `I tried to make my state senator do something for 30 seconds. Nothing worked. They still won.\n\nPlay "Earn Your Seat" and see what gerrymandering feels like.\n\nandycantwin.com`;
+    const url = "https://games.andycantwin.com/earnyourseat";
+    const text = `I tried to make my state senator do something for 30 seconds. Nothing worked. They still won.\n\nPlay "Earn Your Seat" and see what gerrymandering feels like.`;
     if (navigator.share) {
-      navigator.share({ title: "Earn Your Seat", text, url: "https://andycantwin.com" });
+      navigator.share({ title: "Earn Your Seat", text, url });
     } else {
-      navigator.clipboard?.writeText(text);
+      navigator.clipboard?.writeText(`${text}\n\n${url}`);
     }
   }, []);
   
@@ -743,7 +749,7 @@ export default function EarnYourSeat() {
         zIndex: 101,
       }} />
       
-      {gameState === "title" && <TitleScreen onStart={startGame} />}
+      {gameState === "title" && <TitleScreen onStart={startGame} onShare={handleShare} />}
       
       {(gameState === "playing" || gameState === "response") && (
         <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "12px" }}>
