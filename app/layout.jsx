@@ -7,6 +7,7 @@ const pixelFont = Press_Start_2P({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://games.andycantwin.com"),
   title: "Andy Can't Win Games",
   description: "Mini games about democracy, gerrymandering, and what happens when politicians don't have to earn your vote.",
   openGraph: {
