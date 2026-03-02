@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const PIXEL_FONT = `"Press Start 2P", monospace`;
+const PIXEL_FONT = `var(--font-pixel), "Press Start 2P", monospace`;
 
 // Issues that pop up during gameplay
 const ISSUES = [
