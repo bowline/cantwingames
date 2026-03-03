@@ -20,7 +20,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={pixelFont.variable}>
+    <html lang="en" className={pixelFont.variable} style={{ scrollbarGutter: "stable" }}>
       <body style={{ margin: 0, background: "#0a0a1a", minHeight: "100vh" }}>
         {children}
         <Analytics />
