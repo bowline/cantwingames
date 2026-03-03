@@ -45,10 +45,10 @@ function EarnYourSeatCard() {
 
         <div style={{
           padding: "var(--space-md)", position: "relative", zIndex: 1,
-          display: "flex", gap: "var(--space-md)", alignItems: "center", flexWrap: "wrap",
+          display: "flex", flexDirection: "column", gap: "var(--space-sm)",
         }}>
           {/* Pixel art scene */}
-          <div style={{ width: "200px", flexShrink: 0 }}>
+          <div style={{ width: "100%" }}>
             <svg viewBox="0 0 320 180" style={{ width: "100%", imageRendering: "pixelated" }}>
               <rect x="0" y="0" width="320" height="120" fill="#8b9bb4" />
               {[...Array(8)].map((_, i) => (
@@ -85,7 +85,7 @@ function EarnYourSeatCard() {
             </svg>
           </div>
 
-          <div style={{ flex: 1, minWidth: "160px" }}>
+          <div style={{ width: "100%" }}>
             <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#6a8a6a", marginBottom: "6px", letterSpacing: "2px" }}>
               — DISTRICT 31 —
             </div>
@@ -98,6 +98,136 @@ function EarnYourSeatCard() {
             <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#8888aa", lineHeight: "1.9" }}>
               YOU ARE A STATE SENATOR IN A GERRYMANDERED DISTRICT.{" "}
               <span style={{ color: "#aa6633" }}>TRY TO REPRESENT YOUR VOTERS.</span>
+            </div>
+            <div style={{
+              marginTop: "12px", fontFamily: PIXEL_FONT, fontSize: "7px",
+              color: hovered ? "#33ff66" : "#555566",
+              transition: "color 0.2s",
+              animation: hovered ? undefined : "blink 1.5s infinite",
+            }}>
+              {hovered ? "▶ PRESS START" : "PRESS START"}
+            </div>
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}
+
+// ─── NC Teacher Run portal card ───
+function TeacherRunCard() {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <Link href="/teacherrun" style={{ textDecoration: "none", display: "block" }}>
+      <article
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          background: "#1a1a2a",
+          position: "relative",
+          overflow: "hidden",
+          borderLeft: "6px solid #5c8a4c",
+          boxShadow: hovered ? "12px 12px 0 rgba(0,0,0,0.1)" : "8px 8px 0 rgba(0,0,0,0.08)",
+          transform: hovered ? "translateY(-4px)" : "translateY(0)",
+          transition: "transform 150ms ease, box-shadow 150ms ease",
+          cursor: "pointer",
+        }}
+      >
+        {/* Scanline overlay */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+          background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px)",
+          pointerEvents: "none", zIndex: 2,
+        }} />
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+          boxShadow: "inset 0 0 40px rgba(0,0,0,0.5)",
+          pointerEvents: "none", zIndex: 3,
+        }} />
+
+        <div style={{
+          padding: "var(--space-md)", position: "relative", zIndex: 1,
+          display: "flex", flexDirection: "column", gap: "var(--space-sm)",
+        }}>
+          {/* Hallway scene */}
+          <div style={{ width: "100%" }}>
+            <svg viewBox="0 0 320 180" style={{ width: "100%", imageRendering: "pixelated" }}>
+              {/* Hallway floor — checkerboard tiles */}
+              {Array.from({ length: 5 }).map((_, row) =>
+                Array.from({ length: 8 }).map((_, col) => (
+                  <rect key={`t${row}-${col}`} x={col * 40} y={120 + row * 12} width={40} height={12}
+                    fill={(row + col) % 2 === 0 ? "#3a3a4a" : "#32323f"} stroke="#2a2a35" strokeWidth={0.5} />
+                ))
+              )}
+              {/* Hallway walls */}
+              <rect x="0" y="0" width="320" height="120" fill="#4a4a5a" />
+              {/* Lockers left */}
+              {[0, 1, 2, 3].map(i => (
+                <g key={`ll${i}`}>
+                  <rect x={4} y={10 + i * 28} width={30} height={26} fill="#5588aa" stroke="#3a6a8a" strokeWidth={1} rx={1} />
+                  <rect x={28} y={18 + i * 28} width={3} height={8} fill="#3a6a8a" rx={0.5} />
+                  <rect x={10} y={12 + i * 28} width={18} height={3} fill="#4a7a9a" />
+                </g>
+              ))}
+              {/* Lockers right */}
+              {[0, 1, 2, 3].map(i => (
+                <g key={`lr${i}`}>
+                  <rect x={286} y={10 + i * 28} width={30} height={26} fill="#5588aa" stroke="#3a6a8a" strokeWidth={1} rx={1} />
+                  <rect x={289} y={18 + i * 28} width={3} height={8} fill="#3a6a8a" rx={0.5} />
+                  <rect x={292} y={12 + i * 28} width={18} height={3} fill="#4a7a9a" />
+                </g>
+              ))}
+              {/* Finish line */}
+              {Array.from({ length: 16 }).map((_, i) => (
+                <rect key={`fl${i}`} x={40 + i * 15} y={14} width={15} height={6}
+                  fill={i % 2 === 0 ? "#fff" : "#222"} opacity={0.5} />
+              ))}
+              <text x={160} y={11} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}
+                stroke="#000" strokeWidth={1.5} paintOrder="stroke">▲ $72K NATIONAL AVG ▲</text>
+              {/* Teacher sprite */}
+              <g transform="translate(145, 70)">
+                <ellipse cx={20} cy={54} rx={12} ry={3} fill="rgba(0,0,0,0.3)" />
+                <rect x={10} y={20} width={20} height={24} fill="#5c8a4c" rx={2} />
+                <rect x={12} y={6} width={16} height={16} fill="#f0c090" rx={2} />
+                <rect x={12} y={4} width={16} height={8} fill="#6b3a2a" rx={2} />
+                <rect x={14} y={12} width={5} height={4} fill="none" stroke="#333" strokeWidth={1} />
+                <rect x={21} y={12} width={5} height={4} fill="none" stroke="#333" strokeWidth={1} />
+                <rect x={29} y={20} width={8} height={10} fill="#cc4444" rx={1} />
+                <rect x={30} y={21} width={6} height={8} fill="#eee" />
+                <rect x={14} y={42} width={6} height={10} fill="#3a3a5c" rx={1} />
+                <rect x={22} y={42} width={6} height={10} fill="#3a3a5c" rx={1} />
+                <circle cx={20} cy={3} r={4} fill="#cc3333" />
+              </g>
+              {/* Obstacles */}
+              <g transform="translate(60, 90)">
+                <rect x={0} y={0} width={50} height={40} fill="#66bbdd" rx={3} stroke="#000" strokeWidth={1.5} />
+                <rect x={3} y={3} width={44} height={34} fill="rgba(0,0,0,0.3)" rx={2} />
+                <text x={25} y={18} textAnchor="middle" fontSize="12">🧊</text>
+                <text x={25} y={30} textAnchor="middle" fontSize="5" fill="#fff" fontFamily={PIXEL_FONT}>PAY FREEZE</text>
+              </g>
+              <g transform="translate(220, 55)">
+                <rect x={0} y={0} width={50} height={40} fill="#dd6688" rx={3} stroke="#000" strokeWidth={1.5} />
+                <rect x={3} y={3} width={44} height={34} fill="rgba(0,0,0,0.3)" rx={2} />
+                <text x={25} y={18} textAnchor="middle" fontSize="12">💸</text>
+                <text x={25} y={30} textAnchor="middle" fontSize="5" fill="#fff" fontFamily={PIXEL_FONT}>VOUCHER</text>
+              </g>
+            </svg>
+          </div>
+
+          <div style={{ width: "100%" }}>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#5c8a4c", marginBottom: "6px", letterSpacing: "2px" }}>
+              — ENDLESS RUNNER —
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "14px", color: "#66bbdd", textShadow: "2px 2px 0px #112233", lineHeight: "1.4" }}>
+              NC TEACHER
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "14px", color: "#ffcc44", textShadow: "2px 2px 0px #332211", lineHeight: "1.4", marginBottom: "10px" }}>
+              RUN
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#8888aa", lineHeight: "1.9" }}>
+              DODGE PAY FREEZES, VOUCHER BILLS, AND CLASS SIZES.{" "}
+              <span style={{ color: "#dd6688" }}>THE FINISH LINE NEVER GETS CLOSER.</span>
             </div>
             <div style={{
               marginTop: "12px", fontFamily: PIXEL_FONT, fontSize: "7px",
@@ -174,6 +304,8 @@ export default function Home() {
         }
         .ab--donate {
           background: var(--orange); color: var(--charcoal);
+          font-family: var(--fa) !important; font-size: 0.95rem !important;
+          letter-spacing: 0.02em !important; text-transform: none !important;
         }
         .ab--donate:hover { background: var(--orange-bright); color: var(--charcoal); }
         .ab--volunteer { background: var(--magenta); color: var(--white); }
@@ -184,7 +316,7 @@ export default function Home() {
         @media (max-width: 767px) {
           .home-action-bar { left: auto; width: auto; gap: 2px; }
           .home-action-bar a { flex: none; font-size: 0.75rem; padding: 0.5rem 0.75rem; }
-          .ab--donate { font-size: 0.75rem !important; }
+          .ab--donate { font-size: 0.8rem !important; }
         }
 
         /* Nav bar */
@@ -289,9 +421,10 @@ export default function Home() {
 
         /* Coming soon card */
         .home-coming-soon {
-          background: var(--white); padding: var(--space-md);
+          background: var(--white); padding: var(--space-lg) var(--space-md);
           border-left: 6px solid var(--orange); box-shadow: 8px 8px 0 rgba(0,0,0,0.08);
           transition: transform 150ms ease, box-shadow 150ms ease;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .home-coming-soon:hover { transform: translateY(-4px); box-shadow: 12px 12px 0 rgba(0,0,0,0.1); }
         .home-coming-soon h3 { color: var(--purple); margin-bottom: var(--space-xs); }
@@ -359,7 +492,7 @@ export default function Home() {
       {/* ─── Site Header (sticky nav + action bar tabs) ─── */}
       <div className="home-site-header">
         <nav className="home-action-bar" aria-label="Quick actions">
-          <a href="https://secure.actblue.com/donate/andybowline" className="ab--donate" target="_blank" rel="noopener">Chip In $5</a>
+          <a href="https://secure.actblue.com/donate/andybowline" className="ab--donate" target="_blank" rel="noopener">Donate</a>
           <a href={`${SITE}/volunteer.html`} className="ab--volunteer">Volunteer</a>
           <a href={`${SITE}/newsletter.html`} className="ab--touch">Get In Touch</a>
         </nav>
@@ -373,8 +506,8 @@ export default function Home() {
               <a href={`${SITE}/the-rigged-system.html`}>The System</a>
               <a href={`${SITE}/issues.html`}>Issues</a>
               <a href={`${SITE}/district31.html`}>District 31</a>
-              <a href={`${SITE}/about.html`} className="nav--who">Meet Andy</a>
               <a href="/" className="nav--active">Games</a>
+              <a href={`${SITE}/about.html`} className="nav--who">Meet Andy</a>
             </nav>
             <button className="home-hamburger" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
               <span /><span /><span />
@@ -391,15 +524,15 @@ export default function Home() {
           <a href={`${SITE}/the-rigged-system.html`}>The System</a>
           <a href={`${SITE}/issues.html`}>Issues</a>
           <a href={`${SITE}/district31.html`}>District 31</a>
-          <a href={`${SITE}/about.html`} className="mob--who">Meet Andy</a>
           <a href="/" className="mob--active" onClick={(e) => { e.stopPropagation(); setMenuOpen(false); }}>Games</a>
+          <a href={`${SITE}/about.html`} className="mob--who">Meet Andy</a>
         </div>
       )}
 
       {/* ─── Page Header ─── */}
       <section className="home-page-header home-page">
-        <h1>Play the System</h1>
-        <p>Mini games about democracy, gerrymandering, and what happens when politicians don't have to earn your vote.</p>
+        <h1>The Arcade</h1>
+        <p>NC politics, but you can play it.<br />(You still can't win.)</p>
       </section>
 
       {/* ─── Games ─── */}
@@ -407,6 +540,7 @@ export default function Home() {
         <div className="home-container">
           <div className="home-games-grid">
             <EarnYourSeatCard />
+            <TeacherRunCard />
             <article className="home-coming-soon">
               <h3>More Games Coming</h3>
               <p>Democracy isn't a one-player game.</p>
