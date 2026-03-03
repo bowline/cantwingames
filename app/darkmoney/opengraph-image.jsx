@@ -20,13 +20,20 @@ export default async function Image() {
 
   const pixelFont = fontData ? "PressStart2P, monospace" : "monospace";
 
-  const pacColors = [
-    "#cc4444", "#4a9e4a", "#dd8833",
-    "#8866bb", "#66bbdd", "#dd6688",
-    "#cc8833", "#5588aa", "#44aa66",
+  const pacs = [
+    { short: "NC FREEDOM", color: "#cc4444", amt: "$50K" },
+    { short: "LIBERTY FIRST", color: "#4a9e4a", amt: "$250K" },
+    { short: "BRIGHTER NC", color: "#dd8833", amt: "$100K" },
+    { short: "FUTURE NC", color: "#8866bb", amt: "$500K" },
+    { short: "HEARTLAND", color: "#66bbdd", amt: "$75K" },
+    { short: "RISING TIDE", color: "#dd6688", amt: "$750K" },
+    { short: "SOVEREIGN", color: "#cc8833", amt: "$150K" },
+    { short: "TAXPAYER DEF", color: "#5588aa", amt: "$25K" },
+    { short: "HERITAGE NC", color: "#44aa66", amt: "$500K" },
   ];
 
-  const activeCells = [1, 3, 4, 7]; // Which cells show money bags
+  // Which cells are "active" (showing money bags)
+  const active = [0, 2, 4, 5, 7];
 
   return new ImageResponse(
     (
@@ -36,9 +43,6 @@ export default async function Image() {
           height: "100%",
           background: "#0a0a1a",
           display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
           position: "relative",
           overflow: "hidden",
         }}
@@ -52,7 +56,7 @@ export default async function Image() {
             right: 0,
             bottom: 0,
             backgroundImage:
-              "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 6px)",
+              "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 6px)",
             display: "flex",
           }}
         />
@@ -66,102 +70,31 @@ export default async function Image() {
             right: 0,
             bottom: 0,
             backgroundImage:
-              "radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%)",
+              "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%)",
             display: "flex",
           }}
         />
 
-        {/* Dark money counter floating top-right */}
+        {/* === LEFT SIDE: Title + dark money counter + play button === */}
         <div
           style={{
-            position: "absolute",
-            top: 40,
-            right: 60,
-            background: "#1a0a0a",
-            border: "3px solid #aa3333",
-            padding: "12px 20px",
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
+            width: "520px",
+            padding: "40px",
+            gap: "20px",
+            position: "relative",
           }}
         >
-          <span
+          {/* Megacorp presents */}
+          <div
             style={{
               fontFamily: pixelFont,
               fontSize: "10px",
               color: "#aa4444",
-              display: "flex",
-              marginBottom: "4px",
-            }}
-          >
-            DARK MONEY MOVED
-          </span>
-          <span
-            style={{
-              fontFamily: pixelFont,
-              fontSize: "28px",
-              color: "#ff4444",
-              display: "flex",
-            }}
-          >
-            $4.2M
-          </span>
-        </div>
-
-        {/* MEGACORP label floating top-left */}
-        <div
-          style={{
-            position: "absolute",
-            top: 40,
-            left: 60,
-            display: "flex",
-            flexDirection: "column",
-            gap: "4px",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: pixelFont,
-              fontSize: "12px",
-              color: "#aa4444",
               letterSpacing: "3px",
-              display: "flex",
-            }}
-          >
-            MEGACORP INC
-          </span>
-          <span
-            style={{
-              fontFamily: pixelFont,
-              fontSize: "9px",
-              color: "#666",
-              display: "flex",
-            }}
-          >
-            ⏱ 30 SECONDS
-          </span>
-        </div>
-
-        {/* Center content */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "16px",
-            padding: "40px 60px",
-            background: "rgba(10, 10, 26, 0.92)",
-            border: "4px solid #3a3a5a",
-            position: "relative",
-          }}
-        >
-          {/* Subtitle */}
-          <div
-            style={{
-              fontFamily: pixelFont,
-              fontSize: "12px",
-              color: "#aa4444",
-              letterSpacing: "4px",
               display: "flex",
             }}
           >
@@ -174,13 +107,13 @@ export default async function Image() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: "4px",
+              gap: "6px",
             }}
           >
             <div
               style={{
                 fontFamily: pixelFont,
-                fontSize: "48px",
+                fontSize: "38px",
                 color: "#ffcc44",
                 textShadow: "4px 4px 0px #332200",
                 display: "flex",
@@ -191,7 +124,7 @@ export default async function Image() {
             <div
               style={{
                 fontFamily: pixelFont,
-                fontSize: "48px",
+                fontSize: "32px",
                 color: "#ff8844",
                 textShadow: "4px 4px 0px #331a00",
                 display: "flex",
@@ -201,51 +134,49 @@ export default async function Image() {
             </div>
           </div>
 
-          {/* Mini 3x3 grid preview */}
+          {/* Dark money counter — the emotional hook */}
           <div
             style={{
+              background: "#1a0a0a",
+              border: "3px solid #aa3333",
+              padding: "14px 28px",
               display: "flex",
-              flexWrap: "wrap",
-              width: "240px",
+              flexDirection: "column",
+              alignItems: "center",
               gap: "4px",
             }}
           >
-            {Array.from({ length: 9 }).map((_, i) => {
-              const isActive = activeCells.includes(i);
-              return (
-                <div
-                  key={i}
-                  style={{
-                    width: "76px",
-                    height: "52px",
-                    background: isActive ? pacColors[i] : "#0d0d1a",
-                    border: isActive ? "2px solid #fff" : "2px solid #1a1a2e",
-                    borderRadius: "4px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    opacity: isActive ? 0.85 : 1,
-                  }}
-                >
-                  {isActive && (
-                    <>
-                      <span style={{ fontSize: "14px", display: "flex" }}>💰</span>
-                      <span
-                        style={{
-                          fontFamily: pixelFont,
-                          fontSize: "8px",
-                          color: "#fff",
-                          display: "flex",
-                        }}
-                      >
-                        $250K
-                      </span>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+            <span
+              style={{
+                fontFamily: pixelFont,
+                fontSize: "9px",
+                color: "#aa4444",
+                display: "flex",
+                letterSpacing: "2px",
+              }}
+            >
+              DARK MONEY MOVED
+            </span>
+            <span
+              style={{
+                fontFamily: pixelFont,
+                fontSize: "36px",
+                color: "#ff4444",
+                display: "flex",
+              }}
+            >
+              $4.2M
+            </span>
+            <span
+              style={{
+                fontFamily: pixelFont,
+                fontSize: "8px",
+                color: "#884444",
+                display: "flex",
+              }}
+            >
+              YOU CAUGHT: $127K
+            </span>
           </div>
 
           {/* Tagline */}
@@ -272,7 +203,6 @@ export default async function Image() {
               borderLeft: "4px solid #5a9955",
               borderBottom: "4px solid #2a5522",
               borderRight: "4px solid #2a5522",
-              marginTop: "4px",
               display: "flex",
             }}
           >
@@ -280,20 +210,154 @@ export default async function Image() {
           </div>
         </div>
 
-        {/* Bottom: HB 237 citation */}
+        {/* === RIGHT SIDE: 3x3 grid, big and readable === */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "680px",
+            padding: "30px 40px 30px 20px",
+            gap: "12px",
+          }}
+        >
+          {/* Timer bar */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+              maxWidth: "580px",
+              alignItems: "center",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: pixelFont,
+                fontSize: "14px",
+                color: "#ff4444",
+                display: "flex",
+              }}
+            >
+              ⏱ 8s
+            </span>
+            <span
+              style={{
+                fontFamily: pixelFont,
+                fontSize: "10px",
+                color: "#666",
+                display: "flex",
+                letterSpacing: "2px",
+              }}
+            >
+              MEGACORP INC
+            </span>
+            <span
+              style={{
+                fontFamily: pixelFont,
+                fontSize: "12px",
+                color: "#66aa66",
+                display: "flex",
+              }}
+            >
+              3/19
+            </span>
+          </div>
+
+          {/* The 3x3 grid */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              width: "580px",
+              gap: "6px",
+              background: "#111122",
+              padding: "8px",
+              borderRadius: "8px",
+            }}
+          >
+            {pacs.map((pac, i) => {
+              const isActive = active.includes(i);
+              return (
+                <div
+                  key={i}
+                  style={{
+                    width: "184px",
+                    height: "150px",
+                    background: isActive ? pac.color : "#0d0d1a",
+                    border: isActive ? "3px solid #fff" : "3px solid #1a1a2e",
+                    borderRadius: "6px",
+                    display: "flex",
+                    position: "relative",
+                    opacity: isActive ? 0.9 : 1,
+                    overflow: "hidden",
+                  }}
+                >
+                  {isActive ? (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
+                      <div style={{ fontSize: "28px", display: "flex" }}>💰</div>
+                      <div
+                        style={{
+                          fontFamily: pixelFont,
+                          fontSize: "24px",
+                          color: "#fff",
+                          display: "flex",
+                          textShadow: "2px 2px 0px rgba(0,0,0,0.4)",
+                          marginTop: "4px",
+                        }}
+                      >
+                        {pac.amt}
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: pixelFont,
+                          fontSize: "8px",
+                          color: "rgba(255,255,255,0.7)",
+                          display: "flex",
+                          marginTop: "6px",
+                        }}
+                      >
+                        {pac.short}
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
+                      <div
+                        style={{
+                          fontFamily: pixelFont,
+                          fontSize: "8px",
+                          color: "#222233",
+                          display: "flex",
+                        }}
+                      >
+                        · · ·
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Bottom bar */}
         <div
           style={{
             position: "absolute",
-            bottom: "24px",
+            bottom: "18px",
+            left: 0,
+            right: 0,
             display: "flex",
-            gap: "24px",
+            justifyContent: "center",
+            gap: "40px",
             alignItems: "center",
           }}
         >
           <span
             style={{
               fontFamily: pixelFont,
-              fontSize: "10px",
+              fontSize: "9px",
               color: "#555566",
             }}
           >
@@ -302,7 +366,7 @@ export default async function Image() {
           <span
             style={{
               fontFamily: pixelFont,
-              fontSize: "11px",
+              fontSize: "10px",
               color: "#555566",
             }}
           >
