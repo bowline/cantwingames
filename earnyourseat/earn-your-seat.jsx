@@ -688,13 +688,17 @@ export default function EarnYourSeat() {
     nextIssue();
   }, [nextIssue]);
   
-  const handleShare = useCallback(() => {
+  const handleShare = useCallback(async () => {
     const url = "https://games.andycantwin.com/earnyourseat";
     const text = `I tried to make my state senator do something for 30 seconds. Nothing worked. They still won.\n\nPlay "Earn Your Seat" and see what gerrymandering feels like.`;
     if (navigator.share) {
-      navigator.share({ title: "Earn Your Seat", text, url });
-    } else {
-      navigator.clipboard?.writeText(`${text}\n\n${url}`);
+      try { await navigator.share({ title: "Earn Your Seat", text, url }); return; } catch {}
+    }
+    try {
+      await navigator.clipboard.writeText(`${text}\n\n${url}`);
+      alert("Link copied to clipboard!");
+    } catch {
+      prompt("Copy this link to share:", url);
     }
   }, []);
   
