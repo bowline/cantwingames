@@ -1,4 +1,5 @@
 import { Press_Start_2P } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 
 const pixelFont = Press_Start_2P({
   weight: "400",
@@ -22,6 +23,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={pixelFont.variable}>
       <body style={{ margin: 0, background: "#0a0a1a", minHeight: "100vh" }}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
