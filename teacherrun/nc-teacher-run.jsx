@@ -4,10 +4,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 const PIXEL_FONT = `var(--font-pixel), "Press Start 2P", monospace`;
 const GAME_W = 360;
-const GAME_H = 640;
+const GAME_H = 740;
 const LANE_COUNT = 3;
 const LANE_W = GAME_W / LANE_COUNT;
-const PLAYER_Y = 480;
+const PLAYER_Y = 560;
 const PLAYER_W = 40;
 const PLAYER_H = 52;
 const OBSTACLE_W = 80;
@@ -187,20 +187,20 @@ function TitleScreen({ onStart }) {
         <rect width={GAME_W} height={GAME_H} fill="#1a1a2e" />
 
         {/* === SECTION 1: TITLE BAR === */}
-        <rect x={0} y={0} width={GAME_W} height={55} fill="rgba(0,0,0,0.5)" />
-        <text x={GAME_W/2} y={28} textAnchor="middle" fontSize="15" fill="#ffcc44" fontFamily={PIXEL_FONT}
+        <rect x={0} y={0} width={GAME_W} height={60} fill="rgba(0,0,0,0.5)" />
+        <text x={GAME_W/2} y={32} textAnchor="middle" fontSize="15" fill="#ffcc44" fontFamily={PIXEL_FONT}
           stroke="#000" strokeWidth={2} paintOrder="stroke">
           NC TEACHER RUN
         </text>
-        <text x={GAME_W/2} y={46} textAnchor="middle" fontSize="5" fill="#778" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W/2} y={52} textAnchor="middle" fontSize="5" fill="#778" fontFamily={PIXEL_FONT}>
           AN ENDLESS RUNNER WITH NO GOOD ENDING
         </text>
 
         {/* === SECTION 2: YOU → GOAL === */}
-        <rect x={0} y={55} width={GAME_W} height={220} fill="rgba(255,255,255,0.02)" />
+        <rect x={0} y={70} width={GAME_W} height={235} fill="rgba(255,255,255,0.02)" />
 
         {/* Left: Teacher face + YOU */}
-        <g transform="translate(16, 85)">
+        <g transform="translate(16, 100)">
           <rect x={10} y={0} width={90} height={90} fill="#2a2a3e" rx={6} stroke="#555" strokeWidth={1} />
           <rect x={30} y={10} width={50} height={50} fill="#f0c090" rx={6} />
           <rect x={30} y={4} width={50} height={24} fill="#6b3a2a" rx={6} />
@@ -217,10 +217,10 @@ function TitleScreen({ onStart }) {
         </g>
 
         {/* Arrow */}
-        <text x={156} y={140} textAnchor="middle" fontSize="20" fill="#ffcc44" fontFamily={PIXEL_FONT}>→</text>
+        <text x={156} y={155} textAnchor="middle" fontSize="20" fill="#ffcc44" fontFamily={PIXEL_FONT}>→</text>
 
         {/* Right: The goal */}
-        <g transform={`translate(${GAME_W/2 + 16}, 85)`}>
+        <g transform={`translate(${GAME_W/2 + 16}, 100)`}>
           <rect x={0} y={0} width={140} height={90} fill="rgba(255,204,68,0.06)" rx={6}
             stroke="#ffcc44" strokeWidth={1} strokeDasharray="4,3" />
           {Array.from({ length: 17 }).map((_, i) => (
@@ -236,27 +236,27 @@ function TitleScreen({ onStart }) {
         </g>
 
         {/* === SECTION 3: START === */}
-        <rect x={0} y={275} width={GAME_W} height={85} fill="rgba(0,0,0,0.4)" />
-        <text x={GAME_W/2} y={297} textAnchor="middle" fontSize="6" fill="#aaa" fontFamily={PIXEL_FONT}>
+        <rect x={0} y={310} width={GAME_W} height={85} fill="rgba(0,0,0,0.4)" />
+        <text x={GAME_W/2} y={332} textAnchor="middle" fontSize="6" fill="#aaa" fontFamily={PIXEL_FONT}>
           TAP LEFT OR RIGHT TO DODGE
         </text>
 
         <g cursor="pointer" onClick={onStart}>
-          <rect x={50} y={308} width={GAME_W - 100} height={40} rx={4}
+          <rect x={50} y={343} width={GAME_W - 100} height={40} rx={4}
             fill={blink ? "#dd6644" : "#cc5533"} stroke="#ffcc44" strokeWidth={1} />
-          <text x={GAME_W/2} y={334} textAnchor="middle" fontSize="12" fill="#fff" fontFamily={PIXEL_FONT}>
+          <text x={GAME_W/2} y={369} textAnchor="middle" fontSize="12" fill="#fff" fontFamily={PIXEL_FONT}>
             TAP TO START
           </text>
         </g>
 
         {/* === SECTION 4: SCROLLING OBSTACLES === */}
-        <rect x={0} y={360} width={GAME_W} height={GAME_H - 360} fill="rgba(0,0,0,0.3)" />
-        <text x={GAME_W/2} y={382} textAnchor="middle" fontSize="9" fill="#ffcc44" fontFamily={PIXEL_FONT}>
+        <rect x={0} y={400} width={GAME_W} height={GAME_H - 400} fill="rgba(0,0,0,0.3)" />
+        <text x={GAME_W/2} y={422} textAnchor="middle" fontSize="9" fill="#ffcc44" fontFamily={PIXEL_FONT}>
           WHAT YOU'RE UP AGAINST:
         </text>
 
         <defs>
-          <clipPath id="obsClip"><rect x={0} y={392} width={GAME_W} height={165} /></clipPath>
+          <clipPath id="obsClip"><rect x={0} y={432} width={GAME_W} height={170} /></clipPath>
           <linearGradient id="fadeL" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stopColor="#1a1a2e" />
             <stop offset="100%" stopColor="#1a1a2e" stopOpacity="0" />
@@ -273,7 +273,7 @@ function TitleScreen({ onStart }) {
             if (ox < -cardW - cardGap) ox += stripW * 2;
             if (ox < -(cardW + 10) || ox > GAME_W + 10) return null;
             return (
-              <g key={`${obs.id}-${i}`} transform={`translate(${ox}, 398)`}>
+              <g key={`${obs.id}-${i}`} transform={`translate(${ox}, 438)`}>
                 <rect x={0} y={0} width={cardW} height={150} fill={obs.color} rx={6}
                   stroke="#000" strokeWidth={2} opacity={0.9} />
                 <rect x={3} y={3} width={cardW - 6} height={144} fill="rgba(0,0,0,0.3)" rx={4} />
@@ -295,24 +295,24 @@ function TitleScreen({ onStart }) {
           })}
         </g>
 
-        <rect x={0} y={392} width={35} height={165} fill="url(#fadeL)" />
-        <rect x={GAME_W - 35} y={392} width={35} height={165} fill="url(#fadeR)" />
+        <rect x={0} y={432} width={35} height={170} fill="url(#fadeL)" />
+        <rect x={GAME_W - 35} y={432} width={35} height={170} fill="url(#fadeR)" />
 
-        <text x={GAME_W/2} y={568} textAnchor="middle" fontSize="5" fill="#445" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W/2} y={613} textAnchor="middle" fontSize="5" fill="#445" fontFamily={PIXEL_FONT}>
           10,000+ NC TEACHERS HAD TO LEAVE IN 2023
         </text>
-        <text x={GAME_W/2} y={580} textAnchor="middle" fontSize="4.5" fill="#334" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W/2} y={625} textAnchor="middle" fontSize="4.5" fill="#334" fontFamily={PIXEL_FONT}>
           SOURCES: NCAE · NC DPI · NEA · NCFORUM
         </text>
 
         <a href="https://secure.actblue.com/donate/andybowline" target="_blank" rel="noopener noreferrer">
           <g cursor="pointer">
-            <rect x={GAME_W/2 - 135} y={590} width={270} height={38} rx={3}
+            <rect x={GAME_W/2 - 135} y={635} width={270} height={38} rx={3}
               fill="#1a3a1a" stroke="#3a6a3a" strokeWidth={1.5} />
-            <text x={GAME_W/2} y={605} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
+            <text x={GAME_W/2} y={650} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
               NC WON'T PAY TEACHERS. YOU CAN PAY IT FORWARD.
             </text>
-            <text x={GAME_W/2} y={620} textAnchor="middle" fontSize="7" fill="#44ff44" fontFamily={PIXEL_FONT}>
+            <text x={GAME_W/2} y={665} textAnchor="middle" fontSize="7" fill="#44ff44" fontFamily={PIXEL_FONT}>
               CHIP IN $5 →
             </text>
           </g>
@@ -344,26 +344,26 @@ function GameOverScreen({ seconds, hitBy, onRestart, onShare }) {
       <svg viewBox={`0 0 ${GAME_W} ${GAME_H}`} style={{ width: "100%", display: "block" }}>
         <rect width={GAME_W} height={GAME_H} fill="#1a1a2e" />
 
-        <text x={GAME_W/2} y={55} textAnchor="middle" fontSize="24" fill="#ff4444" fontFamily={PIXEL_FONT}
+        <text x={GAME_W/2} y={65} textAnchor="middle" fontSize="24" fill="#ff4444" fontFamily={PIXEL_FONT}
           stroke="#000" strokeWidth={3} paintOrder="stroke">GAME OVER</text>
 
         {phase >= 1 && (
           <g>
-            <text x={GAME_W/2} y={100} textAnchor="middle" fontSize="10" fill="#ffcc44" fontFamily={PIXEL_FONT}>YOU LASTED</text>
-            <text x={GAME_W/2} y={135} textAnchor="middle" fontSize="26" fill="#fff" fontFamily={PIXEL_FONT}>{seconds.toFixed(1)}s</text>
+            <text x={GAME_W/2} y={120} textAnchor="middle" fontSize="10" fill="#ffcc44" fontFamily={PIXEL_FONT}>YOU LASTED</text>
+            <text x={GAME_W/2} y={155} textAnchor="middle" fontSize="26" fill="#fff" fontFamily={PIXEL_FONT}>{seconds.toFixed(1)}s</text>
 
             {hitBy && (
               <g>
-                <rect x={35} y={155} width={GAME_W - 70} height={90} fill={hitBy.color} rx={6}
+                <rect x={35} y={175} width={GAME_W - 70} height={90} fill={hitBy.color} rx={6}
                   stroke="#000" strokeWidth={2} opacity={0.9} />
-                <rect x={38} y={158} width={GAME_W - 76} height={84} fill="rgba(0,0,0,0.3)" rx={4} />
-                <text x={GAME_W/2} y={178} textAnchor="middle" fontSize="7" fill="rgba(255,255,255,0.7)" fontFamily={PIXEL_FONT}>
+                <rect x={38} y={178} width={GAME_W - 76} height={84} fill="rgba(0,0,0,0.3)" rx={4} />
+                <text x={GAME_W/2} y={198} textAnchor="middle" fontSize="7" fill="rgba(255,255,255,0.7)" fontFamily={PIXEL_FONT}>
                   TAKEN OUT BY:
                 </text>
-                <text x={GAME_W/2 - 25} y={210} textAnchor="middle" fontSize="30">{hitBy.icon}</text>
-                <text x={GAME_W/2 + 35} y={200} textAnchor="middle" fontSize="11" fill="#fff" fontFamily={PIXEL_FONT}>{hitBy.label}</text>
-                <text x={GAME_W/2 + 35} y={218} textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.8)" fontFamily={PIXEL_FONT}>{hitBy.sublabel}</text>
-                <text x={GAME_W/2} y={238} textAnchor="middle" fontSize="7" fill="rgba(255,255,255,0.6)" fontFamily={PIXEL_FONT}>{hitBy.desc}</text>
+                <text x={GAME_W/2 - 25} y={230} textAnchor="middle" fontSize="30">{hitBy.icon}</text>
+                <text x={GAME_W/2 + 35} y={220} textAnchor="middle" fontSize="11" fill="#fff" fontFamily={PIXEL_FONT}>{hitBy.label}</text>
+                <text x={GAME_W/2 + 35} y={238} textAnchor="middle" fontSize="9" fill="rgba(255,255,255,0.8)" fontFamily={PIXEL_FONT}>{hitBy.sublabel}</text>
+                <text x={GAME_W/2} y={258} textAnchor="middle" fontSize="7" fill="rgba(255,255,255,0.6)" fontFamily={PIXEL_FONT}>{hitBy.desc}</text>
               </g>
             )}
           </g>
@@ -371,39 +371,39 @@ function GameOverScreen({ seconds, hitBy, onRestart, onShare }) {
 
         {phase >= 2 && (
           <g>
-            <rect x={30} y={260} width={GAME_W - 60} height={88} fill="rgba(255,255,255,0.05)" rx={4} stroke="#444" strokeWidth={1} />
-            <text x={GAME_W/2} y={286} textAnchor="middle" fontSize="8" fill="#ff8866" fontFamily={PIXEL_FONT}>1 IN 10 NC TEACHERS</text>
-            <text x={GAME_W/2} y={304} textAnchor="middle" fontSize="8" fill="#ff8866" fontFamily={PIXEL_FONT}>HAD TO LEAVE LAST YEAR.</text>
-            <text x={GAME_W/2} y={328} textAnchor="middle" fontSize="6" fill="#888" fontFamily={PIXEL_FONT}>NC RANKS 43RD IN TEACHER PAY.</text>
-            <text x={GAME_W/2} y={343} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}>$72K ISN'T THE GOAL. IT'S THE START.</text>
+            <rect x={30} y={295} width={GAME_W - 60} height={88} fill="rgba(255,255,255,0.05)" rx={4} stroke="#444" strokeWidth={1} />
+            <text x={GAME_W/2} y={321} textAnchor="middle" fontSize="8" fill="#ff8866" fontFamily={PIXEL_FONT}>1 IN 10 NC TEACHERS</text>
+            <text x={GAME_W/2} y={339} textAnchor="middle" fontSize="8" fill="#ff8866" fontFamily={PIXEL_FONT}>HAD TO LEAVE LAST YEAR.</text>
+            <text x={GAME_W/2} y={363} textAnchor="middle" fontSize="6" fill="#888" fontFamily={PIXEL_FONT}>NC RANKS 43RD IN TEACHER PAY.</text>
+            <text x={GAME_W/2} y={378} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}>$72K ISN'T THE GOAL. IT'S THE START.</text>
           </g>
         )}
 
         {phase >= 3 && (
           <g>
             <a href="https://andycantwin.com" target="_blank" rel="noopener noreferrer">
-              <rect x={30} y={368} width={GAME_W - 60} height={55} fill="#2a3a2a" rx={4} stroke="#4a6a4a" strokeWidth={1} cursor="pointer" />
-              <text x={GAME_W/2} y={390} textAnchor="middle" fontSize="10" fill="#ffcc44" fontFamily={PIXEL_FONT}>ANDY BOWLINE</text>
-              <text x={GAME_W/2} y={406} textAnchor="middle" fontSize="6" fill="#88aa88" fontFamily={PIXEL_FONT}>NC SENATE · DISTRICT 31</text>
-              <text x={GAME_W/2} y={419} textAnchor="middle" fontSize="7" fill="#ff9966" fontFamily={PIXEL_FONT}>CAN'T WIN. YET.</text>
+              <rect x={30} y={423} width={GAME_W - 60} height={55} fill="#2a3a2a" rx={4} stroke="#4a6a4a" strokeWidth={1} cursor="pointer" />
+              <text x={GAME_W/2} y={445} textAnchor="middle" fontSize="10" fill="#ffcc44" fontFamily={PIXEL_FONT}>ANDY BOWLINE</text>
+              <text x={GAME_W/2} y={461} textAnchor="middle" fontSize="6" fill="#88aa88" fontFamily={PIXEL_FONT}>NC SENATE · DISTRICT 31</text>
+              <text x={GAME_W/2} y={474} textAnchor="middle" fontSize="7" fill="#ff9966" fontFamily={PIXEL_FONT}>CAN'T WIN. YET.</text>
             </a>
 
             <g cursor="pointer" onClick={onShare}>
-              <rect x={30} y={438} width={(GAME_W - 70) / 2} height={40} fill="#444" rx={4} />
-              <text x={30 + (GAME_W - 70) / 4} y={463} textAnchor="middle" fontSize="9" fill="#fff" fontFamily={PIXEL_FONT}>SHARE</text>
+              <rect x={30} y={493} width={(GAME_W - 70) / 2} height={40} fill="#444" rx={4} />
+              <text x={30 + (GAME_W - 70) / 4} y={518} textAnchor="middle" fontSize="9" fill="#fff" fontFamily={PIXEL_FONT}>SHARE</text>
             </g>
             <g cursor="pointer" onClick={onRestart}>
-              <rect x={GAME_W/2 + 5} y={438} width={(GAME_W - 70) / 2} height={40} fill="#444" rx={4} />
-              <text x={GAME_W/2 + 5 + (GAME_W - 70) / 4} y={463} textAnchor="middle" fontSize="8" fill="#fff" fontFamily={PIXEL_FONT}>TRY AGAIN</text>
+              <rect x={GAME_W/2 + 5} y={493} width={(GAME_W - 70) / 2} height={40} fill="#444" rx={4} />
+              <text x={GAME_W/2 + 5 + (GAME_W - 70) / 4} y={518} textAnchor="middle" fontSize="8" fill="#fff" fontFamily={PIXEL_FONT}>TRY AGAIN</text>
             </g>
 
             <a href="https://secure.actblue.com/donate/andybowline" target="_blank" rel="noopener noreferrer">
-              <rect x={30} y={492} width={GAME_W - 60} height={42} fill="#1a6b3c" rx={4} cursor="pointer" />
-              <text x={GAME_W/2} y={518} textAnchor="middle" fontSize="7" fill="#fff" fontFamily={PIXEL_FONT}>CHIP IN $10. LET'S FIX THIS.</text>
+              <rect x={30} y={547} width={GAME_W - 60} height={42} fill="#1a6b3c" rx={4} cursor="pointer" />
+              <text x={GAME_W/2} y={573} textAnchor="middle" fontSize="7" fill="#fff" fontFamily={PIXEL_FONT}>CHIP IN $10. LET'S FIX THIS.</text>
             </a>
 
-            <text x={GAME_W/2} y={560} textAnchor="middle" fontSize="4.5" fill="#445" fontFamily={PIXEL_FONT}>SOURCES: NCAE · NC DPI · NEA · NCFORUM</text>
-            <text x={GAME_W/2} y={573} textAnchor="middle" fontSize="4.5" fill="#445" fontFamily={PIXEL_FONT}>COUPONBIRDS · REASON FOUNDATION 2025</text>
+            <text x={GAME_W/2} y={615} textAnchor="middle" fontSize="4.5" fill="#445" fontFamily={PIXEL_FONT}>SOURCES: NCAE · NC DPI · NEA · NCFORUM</text>
+            <text x={GAME_W/2} y={630} textAnchor="middle" fontSize="4.5" fill="#445" fontFamily={PIXEL_FONT}>COUPONBIRDS · REASON FOUNDATION 2025</text>
           </g>
         )}
 
