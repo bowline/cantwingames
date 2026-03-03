@@ -256,7 +256,7 @@ function TitleScreen({ onStart }) {
         </text>
 
         <defs>
-          <clipPath id="obsClip"><rect x={0} y={392} width={GAME_W} height={210} /></clipPath>
+          <clipPath id="obsClip"><rect x={0} y={392} width={GAME_W} height={165} /></clipPath>
           <linearGradient id="fadeL" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stopColor="#1a1a2e" />
             <stop offset="100%" stopColor="#1a1a2e" stopOpacity="0" />
@@ -274,12 +274,12 @@ function TitleScreen({ onStart }) {
             if (ox < -(cardW + 10) || ox > GAME_W + 10) return null;
             return (
               <g key={`${obs.id}-${i}`} transform={`translate(${ox}, 398)`}>
-                <rect x={0} y={0} width={cardW} height={190} fill={obs.color} rx={6}
+                <rect x={0} y={0} width={cardW} height={150} fill={obs.color} rx={6}
                   stroke="#000" strokeWidth={2} opacity={0.9} />
-                <rect x={3} y={3} width={cardW - 6} height={184} fill="rgba(0,0,0,0.3)" rx={4} />
-                <text x={cardW/2} y={55} textAnchor="middle" fontSize="40">{obs.icon}</text>
-                <text x={cardW/2} y={90} textAnchor="middle" fontSize="10" fill="#fff" fontFamily={PIXEL_FONT}>{obs.label}</text>
-                <text x={cardW/2} y={110} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.8)" fontFamily={PIXEL_FONT}>{obs.sublabel}</text>
+                <rect x={3} y={3} width={cardW - 6} height={144} fill="rgba(0,0,0,0.3)" rx={4} />
+                <text x={cardW/2} y={42} textAnchor="middle" fontSize="34">{obs.icon}</text>
+                <text x={cardW/2} y={72} textAnchor="middle" fontSize="10" fill="#fff" fontFamily={PIXEL_FONT}>{obs.label}</text>
+                <text x={cardW/2} y={90} textAnchor="middle" fontSize="8" fill="rgba(255,255,255,0.8)" fontFamily={PIXEL_FONT}>{obs.sublabel}</text>
                 <text textAnchor="middle" fontSize="7" fill="rgba(255,255,255,0.65)" fontFamily={PIXEL_FONT}>
                   {obs.desc.split(' ').reduce((lines, word) => {
                     const last = lines[lines.length - 1];
@@ -287,7 +287,7 @@ function TitleScreen({ onStart }) {
                     else { lines.push(word); }
                     return lines;
                   }, []).map((line, li) => (
-                    <tspan key={li} x={cardW/2} y={138 + li * 14}>{line}</tspan>
+                    <tspan key={li} x={cardW/2} y={110 + li * 14}>{line}</tspan>
                   ))}
                 </text>
               </g>
@@ -295,15 +295,28 @@ function TitleScreen({ onStart }) {
           })}
         </g>
 
-        <rect x={0} y={392} width={35} height={210} fill="url(#fadeL)" />
-        <rect x={GAME_W - 35} y={392} width={35} height={210} fill="url(#fadeR)" />
+        <rect x={0} y={392} width={35} height={165} fill="url(#fadeL)" />
+        <rect x={GAME_W - 35} y={392} width={35} height={165} fill="url(#fadeR)" />
 
-        <text x={GAME_W/2} y={610} textAnchor="middle" fontSize="5" fill="#445" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W/2} y={568} textAnchor="middle" fontSize="5" fill="#445" fontFamily={PIXEL_FONT}>
           10,000+ NC TEACHERS HAD TO LEAVE IN 2023
         </text>
-        <text x={GAME_W/2} y={625} textAnchor="middle" fontSize="4.5" fill="#334" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W/2} y={580} textAnchor="middle" fontSize="4.5" fill="#334" fontFamily={PIXEL_FONT}>
           SOURCES: NCAE · NC DPI · NEA · NCFORUM
         </text>
+
+        <a href="https://secure.actblue.com/donate/andybowline" target="_blank" rel="noopener noreferrer">
+          <g cursor="pointer">
+            <rect x={GAME_W/2 - 135} y={590} width={270} height={38} rx={3}
+              fill="#1a3a1a" stroke="#3a6a3a" strokeWidth={1.5} />
+            <text x={GAME_W/2} y={605} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
+              NC WON'T PAY TEACHERS. YOU CAN PAY IT FORWARD.
+            </text>
+            <text x={GAME_W/2} y={620} textAnchor="middle" fontSize="7" fill="#44ff44" fontFamily={PIXEL_FONT}>
+              CHIP IN $5 →
+            </text>
+          </g>
+        </a>
 
         <Scanlines />
       </svg>

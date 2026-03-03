@@ -456,6 +456,31 @@ function TitleScreen({ onStart, onShare }) {
       <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#555566", animation: "blink 1.5s infinite" }}>
         PRESS START
       </div>
+
+      <a
+        href="https://secure.actblue.com/donate/andybowline"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ textDecoration: "none" }}
+      >
+        <div style={{
+          background: "#1a3a1a",
+          border: "2px solid #3a6a3a",
+          padding: "6px 16px",
+          textAlign: "center",
+          transition: "border-color 0.2s",
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.borderColor = "#5a9a5a"}
+        onMouseLeave={(e) => e.currentTarget.style.borderColor = "#3a6a3a"}
+        >
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#88dd88" }}>
+            FUND SOMEONE WHO HAS TO
+          </div>
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color: "#44ff44", marginTop: "3px" }}>
+            EARN YOUR VOTE → $5
+          </div>
+        </div>
+      </a>
     </div>
   );
 }

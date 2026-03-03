@@ -380,13 +380,13 @@ function TitleScreen({ onStart, onShare }) {
         </text>
 
         {/* === SECTION 2: SCROLLING PAC CARDS === */}
-        <rect x={0} y={105} width={TITLE_W} height={210} fill="rgba(0,0,0,0.3)" />
-        <text x={TITLE_W / 2} y={122} textAnchor="middle" fontSize="7" fill="#ff8866" fontFamily={PIXEL_FONT}>
+        <rect x={0} y={105} width={TITLE_W} height={135} fill="rgba(0,0,0,0.3)" />
+        <text x={TITLE_W / 2} y={118} textAnchor="middle" fontSize="7" fill="#ff8866" fontFamily={PIXEL_FONT}>
           THE PACS MEGACORP USES:
         </text>
 
         <defs>
-          <clipPath id="pacClip"><rect x={0} y={128} width={TITLE_W} height={185} /></clipPath>
+          <clipPath id="pacClip"><rect x={0} y={123} width={TITLE_W} height={110} /></clipPath>
           <linearGradient id="pacFadeL" x1="0" x2="1" y1="0" y2="0">
             <stop offset="0%" stopColor="#0a0a1a" />
             <stop offset="100%" stopColor="#0a0a1a" stopOpacity="0" />
@@ -404,68 +404,64 @@ function TitleScreen({ onStart, onShare }) {
             if (ox < -(cardW + 10) || ox > TITLE_W + 10) return null;
             const amt = amounts[i % amounts.length];
             return (
-              <g key={`${pac.id}-${i}`} transform={`translate(${ox}, 132)`}>
-                <rect x={0} y={0} width={cardW} height={175} fill={pac.color} rx={6}
+              <g key={`${pac.id}-${i}`} transform={`translate(${ox}, 128)`}>
+                <rect x={0} y={0} width={cardW} height={105} fill={pac.color} rx={6}
                   stroke="#000" strokeWidth={2} opacity={0.9} />
-                <rect x={3} y={3} width={cardW - 6} height={169} fill="rgba(0,0,0,0.3)" rx={4} />
-                <text x={cardW / 2} y={44} textAnchor="middle" fontSize="36">💰</text>
-                <text x={cardW / 2} y={76} textAnchor="middle" fontSize="14" fill="#fff" fontFamily={PIXEL_FONT}
+                <rect x={3} y={3} width={cardW - 6} height={99} fill="rgba(0,0,0,0.3)" rx={4} />
+                <text x={cardW / 2} y={26} textAnchor="middle" fontSize="24">💰</text>
+                <text x={cardW / 2} y={48} textAnchor="middle" fontSize="12" fill="#fff" fontFamily={PIXEL_FONT}
                   stroke="#000" strokeWidth="2" paintOrder="stroke">
                   {amt}
                 </text>
-                <text x={cardW / 2} y={104} textAnchor="middle" fontSize="6" fill="rgba(255,255,255,0.9)" fontFamily={PIXEL_FONT}>
+                <text x={cardW / 2} y={68} textAnchor="middle" fontSize="5.5" fill="rgba(255,255,255,0.9)" fontFamily={PIXEL_FONT}>
                   {pac.short[0]}
                 </text>
-                <text x={cardW / 2} y={119} textAnchor="middle" fontSize="6" fill="rgba(255,255,255,0.9)" fontFamily={PIXEL_FONT}>
+                <text x={cardW / 2} y={82} textAnchor="middle" fontSize="5.5" fill="rgba(255,255,255,0.9)" fontFamily={PIXEL_FONT}>
                   {pac.short[1]}
                 </text>
-                <rect x={10} y={134} width={cardW - 20} height={1} fill="rgba(255,255,255,0.15)" />
-                <text x={cardW / 2} y={152} textAnchor="middle" fontSize="5" fill="rgba(255,255,255,0.5)" fontFamily={PIXEL_FONT}>
+                <text x={cardW / 2} y={98} textAnchor="middle" fontSize="4.5" fill="rgba(255,255,255,0.4)" fontFamily={PIXEL_FONT}>
                   DARK MONEY
-                </text>
-                <text x={cardW / 2} y={167} textAnchor="middle" fontSize="5" fill="rgba(255,255,255,0.5)" fontFamily={PIXEL_FONT}>
-                  PIPELINE
                 </text>
               </g>
             );
           })}
         </g>
 
-        <rect x={0} y={128} width={30} height={185} fill="url(#pacFadeL)" />
-        <rect x={TITLE_W - 30} y={128} width={30} height={185} fill="url(#pacFadeR)" />
+        <rect x={0} y={123} width={30} height={110} fill="url(#pacFadeL)" />
+        <rect x={TITLE_W - 30} y={123} width={30} height={110} fill="url(#pacFadeR)" />
 
         {/* === SECTION 3: INSTRUCTIONS + BUTTONS === */}
-        <rect x={0} y={315} width={TITLE_W} height={85} fill="rgba(0,0,0,0.4)" />
-        <text x={TITLE_W / 2} y={335} textAnchor="middle" fontSize="6.5" fill="#ffcc44" fontFamily={PIXEL_FONT}>
+        <rect x={0} y={250} width={TITLE_W} height={80} fill="rgba(0,0,0,0.4)" />
+        <text x={TITLE_W / 2} y={268} textAnchor="middle" fontSize="6.5" fill="#ffcc44" fontFamily={PIXEL_FONT}>
           CATCH THE MONEY BAGS BEFORE
         </text>
-        <text x={TITLE_W / 2} y={348} textAnchor="middle" fontSize="6.5" fill="#ffcc44" fontFamily={PIXEL_FONT}>
+        <text x={TITLE_W / 2} y={281} textAnchor="middle" fontSize="6.5" fill="#ffcc44" fontFamily={PIXEL_FONT}>
           THEY DISAPPEAR · 30 SECONDS
         </text>
 
         {/* Start button */}
         <g cursor="pointer" onClick={onStart}>
-          <rect x={60} y={358} width={140} height={30} rx={3}
+          <rect x={60} y={291} width={140} height={30} rx={3}
             fill={blink ? "#4a8844" : "#3a7733"} stroke="#66bb66" strokeWidth={1} />
-          <text x={130} y={378} textAnchor="middle" fontSize="11" fill="#ccffcc" fontFamily={PIXEL_FONT}>
+          <text x={130} y={311} textAnchor="middle" fontSize="11" fill="#ccffcc" fontFamily={PIXEL_FONT}>
             ▶ START
           </text>
         </g>
 
         {/* Share button */}
         <g cursor="pointer" onClick={onShare}>
-          <rect x={210} y={358} width={80} height={30} rx={3}
+          <rect x={210} y={291} width={80} height={30} rx={3}
             fill="#dd6644" stroke="#ee7755" strokeWidth={1} />
-          <text x={250} y={378} textAnchor="middle" fontSize="9" fill="#fff" fontFamily={PIXEL_FONT}>
+          <text x={250} y={311} textAnchor="middle" fontSize="9" fill="#fff" fontFamily={PIXEL_FONT}>
             SHARE
           </text>
         </g>
 
         {/* === SECTION 4: CONCEPT — MEGACORP → GRID === */}
-        <rect x={0} y={400} width={TITLE_W} height={120} fill="rgba(255,255,255,0.02)" />
+        <rect x={0} y={340} width={TITLE_W} height={110} fill="rgba(255,255,255,0.02)" />
 
         {/* Left: MEGACORP building */}
-        <g transform="translate(24, 413)">
+        <g transform="translate(24, 353)">
           <rect x={5} y={0} width={80} height={80} fill="#1a1a2e" rx={4} stroke="#aa4444" strokeWidth={1.5} />
           <rect x={20} y={12} width={50} height={56} fill="#2a2a3e" />
           <rect x={25} y={18} width={10} height={10} fill="#3a3a5a" />
@@ -480,10 +476,10 @@ function TitleScreen({ onStart, onShare }) {
         </g>
 
         {/* Arrow */}
-        <text x={135} y={460} textAnchor="middle" fontSize="16" fill="#ffcc44" fontFamily={PIXEL_FONT}>→</text>
+        <text x={135} y={400} textAnchor="middle" fontSize="16" fill="#ffcc44" fontFamily={PIXEL_FONT}>→</text>
 
         {/* Right: 3x3 mini grid preview */}
-        <g transform="translate(160, 410)">
+        <g transform="translate(160, 350)">
           <rect x={0} y={0} width={170} height={95} fill="#111122" rx={4} stroke="#3a3a5a" strokeWidth={1} />
           {Array.from({ length: 9 }).map((_, i) => {
             const col = i % 3;
@@ -517,13 +513,26 @@ function TitleScreen({ onStart, onShare }) {
           <text x={85} y={112} textAnchor="middle" fontSize="5.5" fill="#ff8866" fontFamily={PIXEL_FONT}>TAP TO CATCH</text>
         </g>
 
-        {/* === SECTION 5: HB 237 citation === */}
-        <text x={TITLE_W / 2} y={555} textAnchor="middle" fontSize="5" fill="#444455" fontFamily={PIXEL_FONT}>
+        {/* === SECTION 5: HB 237 citation + donate === */}
+        <text x={TITLE_W / 2} y={472} textAnchor="middle" fontSize="5" fill="#444455" fontFamily={PIXEL_FONT}>
           BASED ON NC HB 237 · SIGNED INTO LAW 2024
         </text>
-        <text x={TITLE_W / 2} y={568} textAnchor="middle" fontSize="5" fill="#444455" fontFamily={PIXEL_FONT}>
+        <text x={TITLE_W / 2} y={484} textAnchor="middle" fontSize="5" fill="#444455" fontFamily={PIXEL_FONT}>
           GOVERNOR VETOED · LEGISLATURE OVERRODE
         </text>
+
+        <a href="https://secure.actblue.com/donate/andybowline" target="_blank" rel="noopener noreferrer">
+          <g cursor="pointer">
+            <rect x={TITLE_W / 2 - 135} y={498} width={270} height={38} rx={3}
+              fill="#1a3a1a" stroke="#3a6a3a" strokeWidth={1.5} />
+            <text x={TITLE_W / 2} y={513} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
+              AT LEAST THIS MONEY YOU CAN TRACE
+            </text>
+            <text x={TITLE_W / 2} y={528} textAnchor="middle" fontSize="7" fill="#44ff44" fontFamily={PIXEL_FONT}>
+              CHIP IN $5 →
+            </text>
+          </g>
+        </a>
       </svg>
     </div>
   );
