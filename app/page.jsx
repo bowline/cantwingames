@@ -278,8 +278,6 @@ export default function Home() {
       <style>{`
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-        /* Reset for this page */
-        .home-page *, .home-page *::before, .home-page *::after { box-sizing: border-box; }
         .home-page h1, .home-page h2, .home-page h3 {
           font-family: var(--fd); font-weight:400; line-height:1.1;
           margin:0 0 var(--space-sm); text-transform:uppercase; letter-spacing:0.02em;
