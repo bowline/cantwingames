@@ -8,13 +8,13 @@ const GAME_H = 740;
 
 // ─── Bill data ───
 const BILLS_SMALL = [
-  { name: "UTILITIES", cost: "$45", damage: 45, color: "#bb4444", ncStat: "Duke Energy raised rates 8% in 2024" },
+  { name: "UTILITIES", cost: "$45", damage: 45, color: "#bb4444", ncStat: "Duke Energy made $4.4B profit — then raised your rates" },
   { name: "GROCERIES", cost: "$55", damage: 55, color: "#aa3838", ncStat: "NC grocery costs up 25% since 2020" },
   { name: "GAS", cost: "$35", damage: 35, color: "#b04040", ncStat: "Rural NC workers drive 30+ min avg commute" },
-  { name: "COPAY", cost: "$40", damage: 40, color: "#a83c3c", ncStat: "1 in 4 NC adults skipped care due to cost" },
+  { name: "COPAY", cost: "$40", damage: 40, color: "#a83c3c", ncStat: "NC had $6.5B in medical debt across 2.5 million people" },
 ];
 const BILLS_MEDIUM = [
-  { name: "RENT", cost: "$150", damage: 150, color: "#cc3333", ncStat: "NC median rent up 40% since 2019" },
+  { name: "RENT", cost: "$150", damage: 150, color: "#cc3333", ncStat: "Half of NC renters spend 30%+ of income just on rent" },
   { name: "RX DRUGS", cost: "$120", damage: 120, color: "#c42e2e", ncStat: "NC seniors pay 3x what Canadians pay for meds" },
   { name: "CAR PMT", cost: "$130", damage: 130, color: "#cc3030", ncStat: "Avg NC car payment: $733/mo" },
   { name: "INSURANCE", cost: "$140", damage: 140, color: "#c83232", ncStat: "NC insurance premiums doubled in 10 years" },
@@ -22,8 +22,8 @@ const BILLS_MEDIUM = [
 ];
 const BILLS_JUMBO = [
   { name: "TUITION", cost: "$350", damage: 350, color: "#dd2222", ncStat: "NC student debt avg: $36,000" },
-  { name: "MEDICAL", cost: "$400", damage: 400, color: "#ee1111", ncStat: "Medical debt is #1 cause of NC bankruptcies" },
-  { name: "MORTGAGE", cost: "$300", damage: 300, color: "#dd1a1a", ncStat: "NC median home price up 45% since 2020" },
+  { name: "MEDICAL", cost: "$400", damage: 400, color: "#ee1111", ncStat: "NC ranks dead last in the country for healthcare costs" },
+  { name: "MORTGAGE", cost: "$300", damage: 300, color: "#dd1a1a", ncStat: "Forsyth County property values jumped 55% in 2025" },
 ];
 
 // Bill sizes (width, height, collision radius)
@@ -448,7 +448,7 @@ function TitleScreen({ onStart, onShare }) {
             <rect x={GAME_W / 2 - 140} y={458} width={280} height={42} rx={3}
               fill="#1a3a1a" stroke="#3a6a3a" strokeWidth={1.5} />
             <text x={GAME_W / 2} y={483} textAnchor="middle" fontSize="9" fill="#44ff44" fontFamily={PIXEL_FONT}>
-              DONATE $5 FOR MY BILLS?
+              CHIP IN $5? I HAVE BILLS TOO.
             </text>
           </g>
         </a>
@@ -601,7 +601,7 @@ function EndScreen({ stats, onRestart, onShare }) {
             }}
               onMouseEnter={e => e.currentTarget.style.borderColor = "#5a9a5a"}
               onMouseLeave={e => e.currentTarget.style.borderColor = "#3a6a3a"}>
-              <div style={{ fontFamily: PIXEL_FONT, fontSize: "9px", color: "#44ff44" }}>DONATE $5 FOR MY BILLS?</div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "9px", color: "#44ff44" }}>CHIP IN $5 TO FIGHT BACK.</div>
             </div>
           </a>
         </div>
