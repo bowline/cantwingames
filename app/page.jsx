@@ -244,6 +244,131 @@ function TeacherRunCard() {
   );
 }
 
+// ─── Bills Bills Bills portal card ───
+function BillsBillsBillsCard() {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <Link href="/billsbillsbills" style={{ textDecoration: "none", display: "block" }}>
+      <article
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        style={{
+          background: "#0a0a1a",
+          position: "relative",
+          overflow: "hidden",
+          borderLeft: "6px solid #ddaa33",
+          boxShadow: hovered ? "12px 12px 0 rgba(0,0,0,0.1)" : "8px 8px 0 rgba(0,0,0,0.08)",
+          transform: hovered ? "translateY(-4px)" : "translateY(0)",
+          transition: "transform 150ms ease, box-shadow 150ms ease",
+          cursor: "pointer",
+        }}
+      >
+        {/* Scanline overlay */}
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+          background: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px)",
+          pointerEvents: "none", zIndex: 2,
+        }} />
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+          boxShadow: "inset 0 0 40px rgba(0,0,0,0.5)",
+          pointerEvents: "none", zIndex: 3,
+        }} />
+
+        <div style={{
+          padding: "var(--space-md)", position: "relative", zIndex: 1,
+          display: "flex", flexDirection: "column", gap: "var(--space-sm)",
+        }}>
+          {/* Space scene: house with shield vs incoming bills */}
+          <div style={{ width: "100%" }}>
+            <svg viewBox="0 0 320 180" style={{ width: "100%", imageRendering: "pixelated" }}>
+              {/* Dark space background with gradient */}
+              <defs>
+                <radialGradient id="cardSpaceBg" cx="50%" cy="40%" r="60%">
+                  <stop offset="0%" stopColor="#12122a" />
+                  <stop offset="100%" stopColor="#0a0a1a" />
+                </radialGradient>
+              </defs>
+              <rect width="320" height="180" fill="url(#cardSpaceBg)" />
+              {/* Stars */}
+              {[20,55,90,130,175,210,250,285,40,145,195,270,310,65,115,235].map((x, i) => (
+                <circle key={`s${i}`} cx={x} cy={(i * 29 + 11) % 170 + 5}
+                  r={(i % 3 === 0) ? 1.2 : 0.8} fill="#fff" opacity={0.15 + (i % 4) * 0.07} />
+              ))}
+              {/* House with shield glow */}
+              <g transform="translate(70, 60)">
+                {/* Shield glow */}
+                <circle cx={14} cy={16} r={28} fill="none" stroke="#ffcc44" strokeWidth={1.5} opacity={0.35} />
+                <circle cx={14} cy={16} r={20} fill="#ffcc44" opacity={0.06} />
+                {/* Roof */}
+                <polygon points="14,0 0,12 28,12" fill="#cc5533" stroke="#992211" strokeWidth={1} />
+                {/* Body */}
+                <rect x={3} y={12} width={22} height={18} fill="#ddcc88" stroke="#aa9955" strokeWidth={1} />
+                {/* Door */}
+                <rect x={11} y={19} width={6} height={11} fill="#664422" />
+                {/* Windows */}
+                <rect x={5} y={15} width={5} height={5} fill="#88bbdd" stroke="#667788" strokeWidth={0.5} />
+                <rect x={18} y={15} width={5} height={5} fill="#88bbdd" stroke="#667788" strokeWidth={0.5} />
+              </g>
+              {/* Incoming bills — tumbling */}
+              <g transform="translate(160, 30) rotate(-15)">
+                <rect x={-14} y={-11} width={28} height={22} fill="#5588aa" rx={3} stroke="rgba(0,0,0,0.4)" strokeWidth={1} />
+                <text x={0} y={2} textAnchor="middle" fontSize="7" fill="#fff" fontFamily={PIXEL_FONT}>$45</text>
+              </g>
+              <g transform="translate(210, 70) rotate(20)">
+                <rect x={-19} y={-15} width={38} height={30} fill="#cc7733" rx={3} stroke="rgba(0,0,0,0.4)" strokeWidth={1} />
+                <text x={0} y={2} textAnchor="middle" fontSize="9" fill="#fff" fontFamily={PIXEL_FONT}>$150</text>
+              </g>
+              <g transform="translate(270, 50) rotate(-8)">
+                <rect x={-25} y={-20} width={50} height={40} fill="#cc3333" rx={3} stroke="rgba(0,0,0,0.4)" strokeWidth={1} />
+                <text x={0} y={3} textAnchor="middle" fontSize="12" fill="#fff" fontFamily={PIXEL_FONT}>$400</text>
+              </g>
+              <g transform="translate(180, 130) rotate(12)">
+                <rect x={-19} y={-15} width={38} height={30} fill="#dd7755" rx={3} stroke="rgba(0,0,0,0.4)" strokeWidth={1} />
+                <text x={0} y={2} textAnchor="middle" fontSize="8" fill="#fff" fontFamily={PIXEL_FONT}>$180</text>
+              </g>
+              {/* Paycheck drifting */}
+              <g transform="translate(260, 145)">
+                <rect x={-16} y={-10} width={32} height={20} rx={3} fill="#ddaa33" stroke="#aa8822" strokeWidth={1.5} />
+                <text x={0} y={2} textAnchor="middle" fontSize="6" fill="#fff" fontFamily={PIXEL_FONT}>$200</text>
+              </g>
+              {/* Health bar at top */}
+              <rect x={10} y={6} width={120} height={10} rx={2} fill="#1a1a2a" stroke="#333" strokeWidth={1} />
+              <rect x={11} y={7} width={42} height={8} rx={1} fill="#dd3333" />
+              <text x={70} y={14} textAnchor="middle" fontSize="5" fill="#fff" fontFamily={PIXEL_FONT}>$347</text>
+            </svg>
+          </div>
+
+          <div style={{ width: "100%" }}>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#ddaa33", marginBottom: "6px", letterSpacing: "2px" }}>
+              — SPACE DODGER —
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "14px", color: "#ff8866", textShadow: "2px 2px 0px #331a11", lineHeight: "1.4" }}>
+              BILLS BILLS
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "14px", color: "#ffcc44", textShadow: "2px 2px 0px #332211", lineHeight: "1.4", marginBottom: "10px" }}>
+              BILLS
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#8888aa", lineHeight: "1.9" }}>
+              DODGE RENT, GROCERIES, AND MEDICAL BILLS.{" "}
+              <span style={{ color: "#ddaa33" }}>THE PAYCHECK CAN'T SAVE YOU.</span>
+            </div>
+            <div style={{
+              marginTop: "12px", fontFamily: PIXEL_FONT, fontSize: "7px",
+              color: hovered ? "#33ff66" : "#555566",
+              transition: "color 0.2s",
+              animation: hovered ? undefined : "blink 1.5s infinite",
+            }}>
+              {hovered ? "▶ PRESS START" : "PRESS START"}
+            </div>
+          </div>
+        </div>
+      </article>
+    </Link>
+  );
+}
+
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
 
