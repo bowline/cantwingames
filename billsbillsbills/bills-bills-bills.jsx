@@ -38,14 +38,14 @@ const PAYCHECK_VALUE = 200;
 const SHIELD_VALUE = 200;
 const PAYCHECK_INTERVAL = 9000; // ms
 
-// Difficulty phases
+// Difficulty phases — compressed so death lands 20-30s
 const PHASES = [
-  { start: 0, end: 6, interval: 1200, pools: [{ bills: BILLS_SMALL, size: SIZE_SMALL, weight: 1 }], speedMult: 1.0 },
-  { start: 6, end: 12, interval: 900, pools: [{ bills: BILLS_SMALL, size: SIZE_SMALL, weight: 3 }, { bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 2 }], speedMult: 1.3 },
-  { start: 12, end: 18, interval: 700, pools: [{ bills: BILLS_SMALL, size: SIZE_SMALL, weight: 1 }, { bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 4 }], speedMult: 1.6 },
-  { start: 18, end: 24, interval: 500, pools: [{ bills: BILLS_SMALL, size: SIZE_SMALL, weight: 1 }, { bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 2 }, { bills: BILLS_JUMBO, size: SIZE_JUMBO, weight: 3 }], speedMult: 2.0 },
-  { start: 24, end: 30, interval: 350, pools: [{ bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 1 }, { bills: BILLS_JUMBO, size: SIZE_JUMBO, weight: 5 }], speedMult: 2.5 },
-  { start: 30, end: 9999, interval: 250, pools: [{ bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 1 }, { bills: BILLS_JUMBO, size: SIZE_JUMBO, weight: 7 }], speedMult: 3.0 },
+  { start: 0, end: 4, interval: 1000, pools: [{ bills: BILLS_SMALL, size: SIZE_SMALL, weight: 1 }], speedMult: 1.2 },
+  { start: 4, end: 8, interval: 700, pools: [{ bills: BILLS_SMALL, size: SIZE_SMALL, weight: 2 }, { bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 3 }], speedMult: 1.6 },
+  { start: 8, end: 12, interval: 500, pools: [{ bills: BILLS_SMALL, size: SIZE_SMALL, weight: 1 }, { bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 3 }, { bills: BILLS_JUMBO, size: SIZE_JUMBO, weight: 2 }], speedMult: 2.0 },
+  { start: 12, end: 17, interval: 380, pools: [{ bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 2 }, { bills: BILLS_JUMBO, size: SIZE_JUMBO, weight: 4 }], speedMult: 2.5 },
+  { start: 17, end: 22, interval: 280, pools: [{ bills: BILLS_MEDIUM, size: SIZE_MEDIUM, weight: 1 }, { bills: BILLS_JUMBO, size: SIZE_JUMBO, weight: 6 }], speedMult: 3.0 },
+  { start: 22, end: 9999, interval: 200, pools: [{ bills: BILLS_JUMBO, size: SIZE_JUMBO, weight: 1 }], speedMult: 3.5 },
 ];
 
 function getPhase(elapsed) {
