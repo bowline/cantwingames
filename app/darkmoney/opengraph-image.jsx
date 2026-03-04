@@ -5,14 +5,12 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function Image() {
-  const fontData = await fetch(
-    "https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-  )
-    .then((res) => res.text())
-    .then((css) => {
-      const match = css.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/);
-      return match ? fetch(match[1]).then((res) => res.arrayBuffer()) : null;
-    });
+  let fontData = null;
+  try {
+    const css = await fetch("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap").then((r) => r.text());
+    const match = css.match(/url\((https:\/\/fonts\.gstatic\.com\/[^)]+)\)/);
+    fontData = match ? await fetch(match[1]).then((r) => r.arrayBuffer()) : null;
+  } catch {}
 
   const fonts = fontData
     ? [{ name: "PressStart2P", data: fontData, style: "normal", weight: 400 }]
