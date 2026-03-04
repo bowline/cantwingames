@@ -487,14 +487,28 @@ function EndScreen({ stats, onRestart, onShare }) {
         </div>
       </div>
 
-      {/* Phase 1: Stats */}
+      {/* Phase 1: What killed you + stats */}
       {showStats && (
         <div style={{
           background: "#1a1a2a", border: "4px solid #3a3a5a",
           padding: "14px 24px", animation: "fadeIn 0.5s ease-out",
           width: "100%", maxWidth: "300px",
         }}>
-          <div style={{ display: "flex", gap: "20px", justifyContent: "center", marginBottom: "12px" }}>
+          {stats.killedBy && (
+            <div style={{ marginBottom: "14px", textAlign: "center" }}>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#aa6666", marginBottom: "6px", letterSpacing: "2px" }}>
+                THE BILL THAT BROKE YOU
+              </div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "16px", color: "#ff4444", marginBottom: "4px",
+                textShadow: "2px 2px 0px #330000" }}>
+                {stats.killedBy.name}
+              </div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "10px", color: "#ff8866" }}>
+                {stats.killedBy.cost}
+              </div>
+            </div>
+          )}
+          <div style={{ display: "flex", gap: "20px", justifyContent: "center", marginBottom: "4px" }}>
             <div>
               <div style={{ fontFamily: PIXEL_FONT, fontSize: "14px", color: "#ff4444" }}>
                 ${Math.round(stats.totalDamage)}
@@ -514,17 +528,18 @@ function EndScreen({ stats, onRestart, onShare }) {
               <div style={{ fontFamily: PIXEL_FONT, fontSize: "6px", color: "#666666" }}>DODGED</div>
             </div>
           </div>
-          {stats.killedBy && (
-            <div style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#aa6666", lineHeight: "1.8" }}>
-              KILLED BY: <span style={{ color: "#ff6644" }}>{stats.killedBy.name} ({stats.killedBy.cost})</span>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Phase 2: The message */}
+      {/* Phase 2: The message — tied to what killed you */}
       {showMessage && (
         <div style={{ animation: "fadeIn 1s ease-out", maxWidth: "300px" }}>
+          {stats.killedBy?.ncStat && (
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#ddaa33", marginBottom: "12px", lineHeight: "1.8",
+              background: "#1a1a0a", border: "2px solid #554422", padding: "10px 14px", textAlign: "center" }}>
+              {stats.killedBy.ncStat.toUpperCase()}
+            </div>
+          )}
           <div style={{ fontFamily: PIXEL_FONT, fontSize: "9px", color: "#ccccdd", lineHeight: "2.2", marginBottom: "10px" }}>
             THE BILLS KEEP GETTING BIGGER.
             <br />THE PAYCHECKS DON'T.
@@ -532,11 +547,6 @@ function EndScreen({ stats, onRestart, onShare }) {
           <div style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color: "#ff8866", lineHeight: "2" }}>
             RALEIGH ISN'T TRYING TO FIX IT.
           </div>
-          {stats.killedBy?.ncStat && (
-            <div style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#ddaa33", marginTop: "10px", lineHeight: "1.8" }}>
-              {stats.killedBy.ncStat.toUpperCase()}
-            </div>
-          )}
         </div>
       )}
 
