@@ -12,10 +12,10 @@ const PLAYER_W = 40;
 const PLAYER_H = 52;
 const OBSTACLE_W = 80;
 const OBSTACLE_H = 64;
-const INITIAL_SPEED = 1.2;
+const INITIAL_SPEED = 2.0;
 const MAX_SPEED = 7;
-const SPEED_INCREASE = 0.18;
-const SPAWN_INTERVAL_START = 2200;
+const SPEED_INCREASE = 0.22;
+const SPAWN_INTERVAL_START = 1600;
 const SPAWN_INTERVAL_MIN = 400;
 const FINISH_LINE_Y = 30;
 
@@ -443,14 +443,14 @@ export default function NCTeacherRun() {
   const spawnObstacle = useCallback((elapsed) => {
     const available = [...OBSTACLES];
     let blockCount = 1;
-    if (elapsed > 20 && Math.random() < 0.4) blockCount = 3;
-    else if (elapsed > 12 && Math.random() < 0.5) blockCount = 2;
-    else if (elapsed > 6 && Math.random() < 0.25) blockCount = 2;
+    if (elapsed > 15 && Math.random() < 0.4) blockCount = 3;
+    else if (elapsed > 8 && Math.random() < 0.5) blockCount = 2;
+    else if (elapsed > 3 && Math.random() < 0.35) blockCount = 2;
 
     const lanesCopy = [0, 1, 2];
     const blocked = [];
     // Force middle lane in first few spawns so player has to move
-    if (elapsed < 4 && Math.random() < 0.7) {
+    if (elapsed < 2.5 && Math.random() < 0.7) {
       blocked.push(1);
     } else {
       for (let i = 0; i < blockCount; i++) {
@@ -495,7 +495,7 @@ export default function NCTeacherRun() {
       setFloorOffset(prev => prev + newSpeed * 2.5);
       setFinishPulse(prev => prev + 1);
 
-      const spawnInterval = Math.max(SPAWN_INTERVAL_MIN, SPAWN_INTERVAL_START - elapsed * 60);
+      const spawnInterval = Math.max(SPAWN_INTERVAL_MIN, SPAWN_INTERVAL_START - elapsed * 80);
       if (now - lastSpawn.current > spawnInterval) {
         const newObs = spawnObstacle(elapsed);
         setObstacles(prev => [...prev, ...newObs]);
