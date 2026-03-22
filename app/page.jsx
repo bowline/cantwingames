@@ -427,8 +427,7 @@ export default function Home() {
         }
         .ab--donate {
           background: var(--orange); color: var(--charcoal);
-          font-family: var(--fa) !important; font-size: 0.95rem !important;
-          letter-spacing: 0.02em !important; text-transform: none !important;
+          font-size: 0.95rem !important;
         }
         .ab--donate:hover { background: var(--orange-bright); color: var(--charcoal); }
         .ab--volunteer { background: var(--magenta); color: var(--white); }
