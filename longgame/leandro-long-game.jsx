@@ -649,20 +649,20 @@ function IntroScreen({ onDone }) {
       </text>
 
       {line >= 1 && (
-        <text x={W / 2} y={260} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}>
-          NC OWES YOUR SCHOOL $5 BILLION.
-        </text>
-      )}
-
-      {line >= 2 && (
         <g>
-          <text x={W / 2} y={320} textAnchor="middle" fontSize="6" fill="#ddddee" fontFamily={PIXEL_FONT}>
-            IT'S BURIED UNDER 32 YEARS
+          <text x={W / 2} y={260} textAnchor="middle" fontSize="6" fill="#ddddee" fontFamily={PIXEL_FONT}>
+            YOU'RE BURIED UNDER 32 YEARS
           </text>
-          <text x={W / 2} y={340} textAnchor="middle" fontSize="6" fill="#ddddee" fontFamily={PIXEL_FONT}>
+          <text x={W / 2} y={280} textAnchor="middle" fontSize="6" fill="#ddddee" fontFamily={PIXEL_FONT}>
             OF POLITICAL GRIDLOCK.
           </text>
         </g>
+      )}
+
+      {line >= 2 && (
+        <text x={W / 2} y={330} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}>
+          YOUR SCHOOL'S $5 BILLION IS UP THERE.
+        </text>
       )}
 
       {line >= 3 && (
@@ -671,7 +671,7 @@ function IntroScreen({ onDone }) {
             THE WATER IS RISING.
           </text>
           <text x={W / 2} y={425} textAnchor="middle" fontSize="7" fill="#ffaa44" fontFamily={PIXEL_FONT}>
-            DIG BEFORE YOU DROWN.
+            DIG UP BEFORE YOU DROWN.
           </text>
         </g>
       )}
