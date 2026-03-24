@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "The Leandro Long Game — 32 years of school funding gridlock";
+export const alt = "The Leandro Tunneler — 32 years of school funding gridlock";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -113,7 +113,7 @@ export default async function Image() {
                 display: "flex",
               }}
             >
-              LONG GAME
+              TUNNELER
             </div>
           </div>
 

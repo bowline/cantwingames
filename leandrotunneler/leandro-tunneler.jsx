@@ -470,13 +470,13 @@ function TitleScreen({ onStart }) {
   }, []);
 
   const shareTitle = () => {
-    const text = `32 years. $5.6 billion plan. $0 delivered.\n\nNC courts ordered school funding. The legislature and courts keep pointing fingers.\n\nPlay "The Leandro Long Game":\nhttps://games.andycantwin.com/longgame`;
+    const text = `32 years. $5.6 billion plan. $0 delivered.\n\nNC courts ordered school funding. The legislature and courts keep pointing fingers.\n\nPlay "The Leandro Tunneler":\nhttps://games.andycantwin.com/leandrotunneler`;
     if (navigator.share) {
-      navigator.share({ title: "The Leandro Long Game", text, url: "https://games.andycantwin.com/longgame" }).catch(() => {});
+      navigator.share({ title: "The Leandro Tunneler", text, url: "https://games.andycantwin.com/leandrotunneler" }).catch(() => {});
     } else if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(() => alert("Link copied!")).catch(() => prompt("Copy this link:", "https://games.andycantwin.com/longgame"));
+      navigator.clipboard.writeText(text).then(() => alert("Link copied!")).catch(() => prompt("Copy this link:", "https://games.andycantwin.com/leandrotunneler"));
     } else {
-      prompt("Copy this link:", "https://games.andycantwin.com/longgame");
+      prompt("Copy this link:", "https://games.andycantwin.com/leandrotunneler");
     }
   };
 
@@ -502,7 +502,7 @@ function TitleScreen({ onStart }) {
       </text>
       <text x={W / 2} y={110} textAnchor="middle" fontSize="13" fill="#ff8844" fontFamily={PIXEL_FONT}
         stroke="#331a00" strokeWidth="3" paintOrder="stroke">
-        LONG GAME
+        TUNNELER
       </text>
 
       <text x={W / 2} y={135} textAnchor="middle" fontSize="5.5" fill="#8888aa" fontFamily={PIXEL_FONT}>
@@ -698,14 +698,14 @@ function EndScreen({ stats }) {
 
   const shareResult = () => {
     const text = stats.drowned
-      ? `I tried to mine through 32 years of gridlock with bare hands. The student drowned.\n\nNC's $5.6B school funding plan — ordered by courts, never delivered.\n\nPlay "The Leandro Long Game":\nhttps://games.andycantwin.com/longgame`
-      : `I mined through 32 years of political gridlock in ${stats.taps} taps.\n\nNC's $5.6B school funding plan — ordered by courts, never delivered. Forsyth County is short $45M.\n\nPlay "The Leandro Long Game":\nhttps://games.andycantwin.com/longgame`;
+      ? `I tried to mine through 32 years of gridlock with bare hands. The student drowned.\n\nNC's $5.6B school funding plan — ordered by courts, never delivered.\n\nPlay "The Leandro Tunneler":\nhttps://games.andycantwin.com/leandrotunneler`
+      : `I mined through 32 years of political gridlock in ${stats.taps} taps.\n\nNC's $5.6B school funding plan — ordered by courts, never delivered. Forsyth County is short $45M.\n\nPlay "The Leandro Tunneler":\nhttps://games.andycantwin.com/leandrotunneler`;
     if (navigator.share) {
-      navigator.share({ title: "The Leandro Long Game", text, url: "https://games.andycantwin.com/longgame" }).catch(() => {});
+      navigator.share({ title: "The Leandro Tunneler", text, url: "https://games.andycantwin.com/leandrotunneler" }).catch(() => {});
     } else if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(() => alert("Link copied!")).catch(() => prompt("Copy this link:", "https://games.andycantwin.com/longgame"));
+      navigator.clipboard.writeText(text).then(() => alert("Link copied!")).catch(() => prompt("Copy this link:", "https://games.andycantwin.com/leandrotunneler"));
     } else {
-      prompt("Copy this link:", "https://games.andycantwin.com/longgame");
+      prompt("Copy this link:", "https://games.andycantwin.com/leandrotunneler");
     }
   };
 
@@ -924,7 +924,7 @@ function EndScreen({ stats }) {
 }
 
 // Main game component
-export default function LeandroLongGame() {
+export default function LeandroTunneler() {
   const [gameState, setGameState] = useState("title");
   const [rockLevel, setRockLevel] = useState(INITIAL_TUNNEL);
   const [caveWidth, setCaveWidth] = useState(40);
