@@ -506,7 +506,7 @@ function TitleScreen({ onStart }) {
       </text>
 
       <text x={W / 2} y={135} textAnchor="middle" fontSize="5.5" fill="#8888aa" fontFamily={PIXEL_FONT}>
-        32 YEARS. ONE COURT. YOUR VOTE.
+        YOU'RE A STUDENT. THE WATER IS RISING.
       </text>
 
       {/* Cave scene preview */}
@@ -527,10 +527,18 @@ function TitleScreen({ onStart }) {
       ))}
       <text x={W / 2} y={255} textAnchor="middle" fontSize="5" fill="#6a5a4a" fontFamily={PIXEL_FONT}>32 YEARS OF ROCK</text>
 
-      {/* Tiny player at bottom */}
-      <rect x={W / 2 - 5} y={310} width={10} height={14} fill="#ddaa77" rx={2} />
-      <rect x={W / 2 - 3} y={300} width={6} height={6} fill="#ddaa77" rx={3} />
-      <text x={W / 2} y={336} textAnchor="middle" fontSize="4" fill="#aa8866" fontFamily={PIXEL_FONT}>YOU</text>
+      {/* Student at bottom */}
+      <rect x={W / 2 - 4} y={308} width={8} height={14} fill="#4488cc" rx={1} />
+      <rect x={W / 2 - 5} y={300} width={10} height={8} fill="#ffcc88" rx={2} />
+      <rect x={W / 2 - 2} y={303} width={2} height={2} fill="#222" />
+      <rect x={W / 2 + 1} y={303} width={2} height={2} fill="#222" />
+      <rect x={W / 2 + 3} y={309} width={4} height={8} fill="#cc6644" rx={1} />
+      <text x={W / 2} y={336} textAnchor="middle" fontSize="4" fill="#88bbdd" fontFamily={PIXEL_FONT}>YOU (A STUDENT)</text>
+
+      {/* Water rising in cave preview */}
+      <rect x={W / 2 - 30} y={318} width={60} height={22} fill="#1a4466" opacity={0.7} rx={2} />
+      <rect x={W / 2 - 30} y={318} width={60} height={3} fill="#3388bb" opacity={0.5} />
+      <text x={W / 2} y={347} textAnchor="middle" fontSize="3.5" fill="#ff4444" fontFamily={PIXEL_FONT}>WATER RISING</text>
 
       {/* Speech bubble preview */}
       <rect x={50} y={355} width={120} height={22} rx={3} fill="#2a2244" stroke="#6644aa" strokeWidth={1} />
@@ -608,6 +616,71 @@ function TitleScreen({ onStart }) {
           </text>
         </g>
       </a>
+    </svg>
+  );
+}
+
+// Intro screen — brief story setup before gameplay
+function IntroScreen({ onDone }) {
+  const [line, setLine] = useState(0);
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setLine(1), 600),
+      setTimeout(() => setLine(2), 1800),
+      setTimeout(() => setLine(3), 3200),
+      setTimeout(() => setLine(4), 4800),
+      setTimeout(() => onDone(), 6500),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [onDone]);
+
+  return (
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      style={{ width: "100%", display: "block", cursor: "pointer" }}
+      onClick={onDone}
+      onTouchStart={(e) => { e.preventDefault(); onDone(); }}
+    >
+      <rect width={W} height={H} fill="#0a0a1a" />
+
+      <text x={W / 2} y={200} textAnchor="middle" fontSize="7" fill="#88bbdd" fontFamily={PIXEL_FONT}>
+        YOU ARE A STUDENT.
+      </text>
+
+      {line >= 1 && (
+        <text x={W / 2} y={260} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}>
+          NC OWES YOUR SCHOOL $5 BILLION.
+        </text>
+      )}
+
+      {line >= 2 && (
+        <g>
+          <text x={W / 2} y={320} textAnchor="middle" fontSize="6" fill="#ddddee" fontFamily={PIXEL_FONT}>
+            IT'S BURIED UNDER 32 YEARS
+          </text>
+          <text x={W / 2} y={340} textAnchor="middle" fontSize="6" fill="#ddddee" fontFamily={PIXEL_FONT}>
+            OF POLITICAL GRIDLOCK.
+          </text>
+        </g>
+      )}
+
+      {line >= 3 && (
+        <g>
+          <text x={W / 2} y={400} textAnchor="middle" fontSize="6" fill="#ff6666" fontFamily={PIXEL_FONT}>
+            THE WATER IS RISING.
+          </text>
+          <text x={W / 2} y={425} textAnchor="middle" fontSize="7" fill="#ffaa44" fontFamily={PIXEL_FONT}>
+            DIG BEFORE YOU DROWN.
+          </text>
+        </g>
+      )}
+
+      {line >= 4 && (
+        <text x={W / 2} y={520} textAnchor="middle" fontSize="5" fill="#666677" fontFamily={PIXEL_FONT}>
+          TAP TO START
+        </text>
+      )}
     </svg>
   );
 }
@@ -1212,7 +1285,9 @@ export default function LeandroLongGame() {
           overflow: "hidden",
         }}
       >
-        {gameState === "title" && <TitleScreen onStart={startGame} />}
+        {gameState === "title" && <TitleScreen onStart={() => setGameState("intro")} />}
+
+        {gameState === "intro" && <IntroScreen onDone={startGame} />}
 
         {gameState === "ended" && (
           <EndScreen stats={{
