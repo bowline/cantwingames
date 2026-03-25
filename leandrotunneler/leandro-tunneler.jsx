@@ -8,7 +8,7 @@ const W = 360;
 const H = 740;
 
 // Timeline milestones
-// 0-17s covers 1994-2026 (fast), 17-25s covers 2026-2030 (slow)
+// 0-17s covers 1994-2026 (fast), 17-25s covers 2026-2028 (slow)
 const MILESTONES = [
   { year: 1994, label: "5 DISTRICTS SUE NC", time: 0 },
   { year: 1997, label: "COURT: STATE MUST FUND", time: 2.5 },
@@ -17,7 +17,7 @@ const MILESTONES = [
   { year: 2022, label: "COURT FLIPS. 'REHEARING.'", time: 13 },
   { year: 2025, label: "NOTHING. STILL WAITING.", time: 15.5 },
   { year: 2026, label: "EARLS ELECTION", time: 17 },
-  { year: 2030, label: "FLIP THE COURT", time: 25 },
+  { year: 2028, label: "FLIP THE COURT", time: 25 },
 ];
 
 // Speech bubble dialogue — alternates between Legislature and Court
@@ -51,7 +51,7 @@ const TOOLS = {
 
 // Phase timing
 const PHASE2_TIME = 17; // hammer available (2026 — Earls election)
-const PHASE3_TIME = 25; // digger available (2030 — flip the court)
+const PHASE3_TIME = 25; // digger available (2028 — flip the court)
 const GAME_END_TIME = 32; // total game length
 
 // Water / drowning config
@@ -1095,16 +1095,16 @@ export default function LeandroTunneler() {
       elapsedRef.current = dt;
       setElapsed(dt);
 
-      // Year interpolation — fast 1994-2026 in first 17s, slow 2026-2030 after
+      // Year interpolation — fast 1994-2026 in first 17s, slow 2026-2028 after
       let year;
       if (dt <= PHASE2_TIME) {
         // 0-17s: 1994 to 2026
         const progress = dt / PHASE2_TIME;
         year = Math.floor(1994 + progress * (2026 - 1994));
       } else {
-        // 17-25s: 2026 to 2030
+        // 17-25s: 2026 to 2028
         const progress = Math.min((dt - PHASE2_TIME) / (PHASE3_TIME - PHASE2_TIME), 1);
-        year = Math.floor(2026 + progress * (2030 - 2026));
+        year = Math.floor(2026 + progress * (2028 - 2026));
       }
       setCurrentYear(year);
 
@@ -1541,7 +1541,7 @@ export default function LeandroTunneler() {
               textAlign: "center",
               textShadow: "0 0 10px rgba(255,204,68,0.4)",
             }}>
-              IT'S {toolPrompt === "hammer" ? "2026" : "2030"}
+              IT'S {toolPrompt === "hammer" ? "2026" : "2028"}
             </div>
 
             {/* Tool icon area */}
