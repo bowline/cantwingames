@@ -26,7 +26,7 @@ const LEVELS = [
     population: "350,000",
     hospitalDist: "0.8 mi",
     hospitalDistance: 800,
-    spawnInterval: 3333, // ~0.3/s
+    spawnInterval: 1200, // frequent but level is short
     obstacles: ["taxi", "pedestrian", "redlight"],
     envType: "urban",
     lanes: 3,
@@ -39,7 +39,7 @@ const LEVELS = [
     population: "45,000",
     hospitalDist: "4.2 mi",
     hospitalDistance: 5000,
-    spawnInterval: 1667, // ~0.6/s
+    spawnInterval: 700, // ~1.4/s — tense dodging
     obstacles: ["suv", "construction", "schoolzone", "stalled", "deliveryvan"],
     envType: "suburban",
     lanes: 3,
@@ -52,7 +52,7 @@ const LEVELS = [
     population: "2,100",
     hospitalDist: "47 mi",
     hospitalDistance: Infinity,
-    spawnInterval: 4000, // ~0.25/s
+    spawnInterval: 1800, // more frequent than before — occasional clusters break up the emptiness
     obstacles: ["tractor", "deer", "loggingtruck", "gravel"],
     envType: "rural",
     lanes: 3,
@@ -262,26 +262,38 @@ function ObstacleSprite({ obs }) {
   }
 }
 
-// ─── Hospital sprite ───
+// ─── Hospital sprite (spans full road width) ───
 function HospitalSprite({ y }) {
+  const hw = ROAD_WIDTH + 40; // wider than road
+  const hx = ROAD_LEFT - 20;
   return (
-    <g transform={`translate(${GAME_W / 2 - 30}, ${y - 30})`}>
-      {/* Glow */}
-      <rect x={-10} y={-10} width={80} height={80} rx={8} fill="#33ff66" opacity={0.08}>
-        <animate attributeName="opacity" values="0.08;0.15;0.08" dur="1.5s" repeatCount="indefinite" />
+    <g transform={`translate(${hx}, ${y - 40})`}>
+      {/* Glow behind */}
+      <rect x={-10} y={-10} width={hw + 20} height={100} rx={8} fill="#33ff66" opacity={0.06}>
+        <animate attributeName="opacity" values="0.06;0.12;0.06" dur="1.5s" repeatCount="indefinite" />
       </rect>
-      {/* Building */}
-      <rect x={0} y={0} width={60} height={50} rx={4} fill="#228844" stroke="#33ff66" strokeWidth={2} />
-      <rect x={4} y={4} width={52} height={42} rx={2} fill="#1a6633" />
-      {/* H */}
-      <text x={30} y={32} textAnchor="middle" fontSize="28" fill="#fff" fontFamily={PIXEL_FONT}
+      {/* Main building */}
+      <rect x={0} y={10} width={hw} height={60} rx={4} fill="#228844" stroke="#33ff66" strokeWidth={2} />
+      <rect x={4} y={14} width={hw - 8} height={52} rx={2} fill="#1a6633" />
+      {/* EMERGENCY text */}
+      <text x={hw / 2} y={32} textAnchor="middle" fontSize="7" fill="#88ffaa" fontFamily={PIXEL_FONT} letterSpacing="2">
+        EMERGENCY
+      </text>
+      {/* Big H */}
+      <text x={hw / 2} y={58} textAnchor="middle" fontSize="28" fill="#fff" fontFamily={PIXEL_FONT}
         stroke="#33ff66" strokeWidth={1} paintOrder="stroke">
         H
       </text>
-      {/* Cross */}
-      <rect x={24} y={-8} width={12} height={12} rx={2} fill="#ff3333" />
-      <rect x={27} y={-11} width={6} height={18} rx={1} fill="#fff" />
-      <rect x={21} y={-5} width={18} height={6} rx={1} fill="#fff" />
+      {/* Red cross on roof */}
+      <rect x={hw / 2 - 6} y={0} width={12} height={12} rx={2} fill="#ff3333" />
+      <rect x={hw / 2 - 3} y={-3} width={6} height={18} rx={1} fill="#fff" />
+      <rect x={hw / 2 - 9} y={3} width={18} height={6} rx={1} fill="#fff" />
+      {/* Entrance doors */}
+      <rect x={hw / 2 - 12} y={54} width={10} height={16} rx={1} fill="#33ff66" opacity={0.5} />
+      <rect x={hw / 2 + 2} y={54} width={10} height={16} rx={1} fill="#33ff66" opacity={0.5} />
+      {/* Side wings */}
+      <rect x={-8} y={20} width={16} height={40} rx={3} fill="#1a5533" stroke="#33ff66" strokeWidth={1} />
+      <rect x={hw - 8} y={20} width={16} height={40} rx={3} fill="#1a5533" stroke="#33ff66" strokeWidth={1} />
     </g>
   );
 }
@@ -428,38 +440,45 @@ function LandmarkSprite({ type, x, y }) {
   }
 }
 
-// ─── Heart Attack Meter ───
-function HeartMeter({ percent }) {
+// ─── Survival Meter (counts DOWN from 100 → 0 = death) ───
+function SurvivalMeter({ percent }) {
+  // percent here is the RAW meter (0→100 filling up). We display as survival (100→0).
+  const survival = Math.max(0, 100 - percent);
   const barX = GAME_W - 28;
   const barY = 60;
   const barW = 16;
   const barH = 200;
-  const fillH = (barH * Math.min(100, percent)) / 100;
+  const fillH = (barH * survival) / 100;
   const fillY = barY + barH - fillH;
 
-  // Gradient color based on fill level
-  const getColor = (pct) => {
-    if (pct < 25) return "#33ff66";
-    if (pct < 50) return "#ffcc44";
-    if (pct < 75) return "#ff8866";
+  // Color based on survival remaining (green when healthy, red when dying)
+  const getColor = (surv) => {
+    if (surv > 75) return "#33ff66";
+    if (surv > 50) return "#ffcc44";
+    if (surv > 25) return "#ff8866";
     return "#ff4444";
   };
 
-  const color = getColor(percent);
-  // Pulse rate increases with meter
-  const pulseDur = Math.max(0.2, 1.2 - percent * 0.01);
+  const color = getColor(survival);
+  // Pulse rate increases as survival drops
+  const pulseDur = Math.max(0.2, 0.3 + survival * 0.01);
 
   return (
     <g>
+      {/* Label */}
+      <text x={barX + barW / 2} y={barY - 10} textAnchor="middle" fontSize="4" fill="#8888aa" fontFamily={PIXEL_FONT}>
+        SURVIVAL
+      </text>
+
       {/* Bar background */}
       <rect x={barX - 2} y={barY - 2} width={barW + 4} height={barH + 4} rx={3}
         fill="#0a0a1a" stroke="#3a3a5a" strokeWidth={1} />
       <rect x={barX} y={barY} width={barW} height={barH} rx={2} fill="#1a1a2a" />
 
-      {/* Fill */}
+      {/* Fill — shows what's LEFT */}
       <rect x={barX} y={fillY} width={barW} height={fillH} rx={2} fill={color}>
-        {percent > 75 && (
-          <animate attributeName="opacity" values="1;0.7;1" dur="0.3s" repeatCount="indefinite" />
+        {survival < 25 && (
+          <animate attributeName="opacity" values="1;0.5;1" dur="0.3s" repeatCount="indefinite" />
         )}
       </rect>
 
@@ -489,7 +508,7 @@ function HeartMeter({ percent }) {
         &#x2665;
       </text>
 
-      {/* Percentage text */}
+      {/* Percentage text — shows survival remaining */}
       <text
         x={barX + barW / 2}
         y={barY + barH + 36}
@@ -498,7 +517,7 @@ function HeartMeter({ percent }) {
         fill={color}
         fontFamily={PIXEL_FONT}
       >
-        {Math.min(100, Math.floor(percent))}%
+        {Math.max(0, Math.floor(survival))}%
       </text>
     </g>
   );
@@ -774,82 +793,91 @@ function TitleScreen({ onStart, onShare }) {
           <animate attributeName="font-size" values="12;14;12" dur="0.8s" repeatCount="indefinite" />
         </text>
 
-        {/* === SECTION 2: TAGLINE === */}
-        <rect x={0} y={195} width={GAME_W} height={90} fill="rgba(0,0,0,0.6)" />
+        {/* === SECTION 2: PREMISE === */}
+        <rect x={0} y={190} width={GAME_W} height={110} fill="rgba(0,0,0,0.6)" />
 
-        <text x={GAME_W / 2} y={218} textAnchor="middle" fontSize="7" fill="#ccccdd" fontFamily={PIXEL_FONT}>
-          Same heart attack.
+        <text x={GAME_W / 2} y={210} textAnchor="middle" fontSize="6" fill="#ff8866" fontFamily={PIXEL_FONT}>
+          YOU'RE HAVING A HEART ATTACK.
         </text>
-        <text x={GAME_W / 2} y={238} textAnchor="middle" fontSize="7" fill="#ccccdd" fontFamily={PIXEL_FONT}>
-          Different zip code.
+        <text x={GAME_W / 2} y={228} textAnchor="middle" fontSize="6" fill="#ccccdd" fontFamily={PIXEL_FONT}>
+          RACE TO THE HOSPITAL.
         </text>
-        <text x={GAME_W / 2} y={266} textAnchor="middle" fontSize="6" fill="#ff8866" fontFamily={PIXEL_FONT}>
-          Different outcome.
+        <text x={GAME_W / 2} y={246} textAnchor="middle" fontSize="6" fill="#ccccdd" fontFamily={PIXEL_FONT}>
+          YOUR SURVIVAL METER IS FALLING.
+        </text>
+        <text x={GAME_W / 2} y={264} textAnchor="middle" fontSize="6" fill="#8888aa" fontFamily={PIXEL_FONT}>
+          3 ZIP CODES. 3 DISTANCES.
+        </text>
+        <text x={GAME_W / 2} y={282} textAnchor="middle" fontSize="6.5" fill="#ff4444" fontFamily={PIXEL_FONT}>
+          SAME HEART ATTACK.
         </text>
 
         {/* === SECTION 3: LEVEL PREVIEW CARDS === */}
-        <rect x={0} y={300} width={GAME_W} height={145} fill="rgba(0,0,0,0.4)" />
+        <rect x={0} y={310} width={GAME_W} height={120} fill="rgba(0,0,0,0.4)" />
 
         {/* Urban */}
-        <rect x={12} y={308} width={100} height={54} rx={4} fill="#1a1a2e" stroke="#33ff66" strokeWidth={1} />
-        <text x={62} y={324} textAnchor="middle" fontSize="6" fill="#33ff66" fontFamily={PIXEL_FONT}>URBAN</text>
-        <text x={62} y={338} textAnchor="middle" fontSize="5" fill="#8888aa" fontFamily={PIXEL_FONT}>0.8 mi</text>
-        <text x={62} y={352} textAnchor="middle" fontSize="10" fill="#33ff66">&#x2665;</text>
+        <rect x={12} y={318} width={100} height={62} rx={4} fill="#1a1a2e" stroke="#33ff66" strokeWidth={1} />
+        <text x={62} y={332} textAnchor="middle" fontSize="6" fill="#33ff66" fontFamily={PIXEL_FONT}>URBAN</text>
+        <text x={62} y={346} textAnchor="middle" fontSize="5" fill="#8888aa" fontFamily={PIXEL_FONT}>0.8 mi</text>
+        <text x={62} y={360} textAnchor="middle" fontSize="10" fill="#33ff66">&#x2665;</text>
+        <text x={62} y={374} textAnchor="middle" fontSize="4" fill="#557755" fontFamily={PIXEL_FONT}>CLOSE</text>
 
         {/* Suburban */}
-        <rect x={122} y={308} width={116} height={54} rx={4} fill="#1a1a2e" stroke="#ffcc44" strokeWidth={1} />
-        <text x={180} y={324} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}>SUBURBAN</text>
-        <text x={180} y={338} textAnchor="middle" fontSize="5" fill="#8888aa" fontFamily={PIXEL_FONT}>4.2 mi</text>
-        <text x={180} y={352} textAnchor="middle" fontSize="10" fill="#ffcc44">&#x2665;</text>
+        <rect x={122} y={318} width={116} height={62} rx={4} fill="#1a1a2e" stroke="#ffcc44" strokeWidth={1} />
+        <text x={180} y={332} textAnchor="middle" fontSize="6" fill="#ffcc44" fontFamily={PIXEL_FONT}>SUBURBAN</text>
+        <text x={180} y={346} textAnchor="middle" fontSize="5" fill="#8888aa" fontFamily={PIXEL_FONT}>4.2 mi</text>
+        <text x={180} y={360} textAnchor="middle" fontSize="10" fill="#ffcc44">&#x2665;</text>
+        <text x={180} y={374} textAnchor="middle" fontSize="4" fill="#777755" fontFamily={PIXEL_FONT}>FARTHER</text>
 
         {/* Rural */}
-        <rect x={248} y={308} width={100} height={54} rx={4} fill="#1a1a2e" stroke="#ff4444" strokeWidth={1} />
-        <text x={298} y={324} textAnchor="middle" fontSize="6" fill="#ff4444" fontFamily={PIXEL_FONT}>RURAL</text>
-        <text x={298} y={338} textAnchor="middle" fontSize="5" fill="#8888aa" fontFamily={PIXEL_FONT}>47 mi</text>
-        <text x={298} y={352} textAnchor="middle" fontSize="10" fill="#ff4444">&#x2665;</text>
+        <rect x={248} y={318} width={100} height={62} rx={4} fill="#1a1a2e" stroke="#ff4444" strokeWidth={1} />
+        <text x={298} y={332} textAnchor="middle" fontSize="6" fill="#ff4444" fontFamily={PIXEL_FONT}>RURAL</text>
+        <text x={298} y={346} textAnchor="middle" fontSize="5" fill="#8888aa" fontFamily={PIXEL_FONT}>47 mi</text>
+        <text x={298} y={360} textAnchor="middle" fontSize="10" fill="#ff4444">&#x2665;</text>
+        <text x={298} y={374} textAnchor="middle" fontSize="4" fill="#775555" fontFamily={PIXEL_FONT}>???</text>
 
         {/* Controls hint */}
-        <text x={GAME_W / 2} y={384} textAnchor="middle" fontSize="5.5" fill="#666677" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W / 2} y={410} textAnchor="middle" fontSize="5.5" fill="#666677" fontFamily={PIXEL_FONT}>
           TAP LEFT/RIGHT TO STEER · ARROWS/A/D
         </text>
 
         {/* === SECTION 4: START + SHARE === */}
-        <rect x={0} y={400} width={GAME_W} height={70} fill="rgba(0,0,0,0.5)" />
+        <rect x={0} y={424} width={GAME_W} height={70} fill="rgba(0,0,0,0.5)" />
 
         {/* Start button */}
         <g cursor="pointer" onClick={onStart}>
-          <rect x={45} y={412} width={160} height={40} rx={3}
+          <rect x={45} y={436} width={160} height={40} rx={3}
             fill={blink ? "#4a8844" : "#3a7733"} stroke="#66bb66" strokeWidth={1} />
-          <text x={125} y={437} textAnchor="middle" fontSize="12" fill="#ccffcc" fontFamily={PIXEL_FONT}>
+          <text x={125} y={461} textAnchor="middle" fontSize="12" fill="#ccffcc" fontFamily={PIXEL_FONT}>
             TAP TO START
           </text>
         </g>
 
         {/* Share button */}
         <g cursor="pointer" onClick={onShare}>
-          <rect x={215} y={412} width={100} height={40} rx={3}
+          <rect x={215} y={436} width={100} height={40} rx={3}
             fill="#dd6644" stroke="#ee7755" strokeWidth={1} />
-          <text x={265} y={437} textAnchor="middle" fontSize="10" fill="#fff" fontFamily={PIXEL_FONT}>
+          <text x={265} y={461} textAnchor="middle" fontSize="10" fill="#fff" fontFamily={PIXEL_FONT}>
             SHARE
           </text>
         </g>
 
         {/* === SECTION 5: SOURCES + DONATE === */}
-        <text x={GAME_W / 2} y={494} textAnchor="middle" fontSize="4.5" fill="#444455" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W / 2} y={518} textAnchor="middle" fontSize="4.5" fill="#444455" fontFamily={PIXEL_FONT}>
           SOURCES: CDC · NC DHHS · AHA
         </text>
-        <text x={GAME_W / 2} y={508} textAnchor="middle" fontSize="4.5" fill="#444455" fontFamily={PIXEL_FONT}>
+        <text x={GAME_W / 2} y={532} textAnchor="middle" fontSize="4.5" fill="#444455" fontFamily={PIXEL_FONT}>
           CHARTIS CENTER FOR RURAL HEALTH
         </text>
 
         <a href="https://secure.actblue.com/donate/andybowline" target="_blank" rel="noopener noreferrer">
           <g cursor="pointer">
-            <rect x={GAME_W / 2 - 135} y={524} width={270} height={48} rx={3}
+            <rect x={GAME_W / 2 - 135} y={548} width={270} height={48} rx={3}
               fill="#1a3a1a" stroke="#3a6a3a" strokeWidth={1.5} />
-            <text x={GAME_W / 2} y={545} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
+            <text x={GAME_W / 2} y={569} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
               CHIP IN FOR RURAL HEALTHCARE
             </text>
-            <text x={GAME_W / 2} y={562} textAnchor="middle" fontSize="9" fill="#44ff44" fontFamily={PIXEL_FONT}>
+            <text x={GAME_W / 2} y={586} textAnchor="middle" fontSize="9" fill="#44ff44" fontFamily={PIXEL_FONT}>
               DONATE $10 &#x2192;
             </text>
           </g>
@@ -968,7 +996,7 @@ function LevelComplete({ level, meterPercent, onContinue }) {
         </text>
 
         <text x={GAME_W / 2} y={385} textAnchor="middle" fontSize="6" fill="#8888aa" fontFamily={PIXEL_FONT}>
-          Heart attack meter: {Math.floor(meterPercent)}%
+          Survival: {Math.max(0, Math.floor(100 - meterPercent))}%
         </text>
 
         {/* Heart - survived */}
@@ -1400,19 +1428,29 @@ export default function CodeBlue() {
       const now = Date.now();
       if (now - lastSpawnRef.current > level.spawnInterval) {
         const obsTypes = level.obstacles;
-        const type = obsTypes[Math.floor(Math.random() * obsTypes.length)];
-        const def = getObstacleDef(type);
-        const laneIdx = Math.floor(Math.random() * level.lanes);
-        const laneX = LANE_CENTERS[laneIdx];
-        obstaclesRef.current.push({
-          id: Math.random(),
-          type,
-          x: laneX,
-          y: -def.h,
-          w: def.w,
-          h: def.h,
-          lane: laneIdx,
-        });
+        // How many obstacles to spawn at once (suburban can get pairs)
+        const count = level.id === 2 && Math.random() < 0.4 ? 2 : 1;
+        const usedLanes = [];
+        for (let s = 0; s < count; s++) {
+          const type = obsTypes[Math.floor(Math.random() * obsTypes.length)];
+          const def = getObstacleDef(type);
+          let laneIdx;
+          // Avoid same lane for multi-spawn
+          do {
+            laneIdx = Math.floor(Math.random() * level.lanes);
+          } while (usedLanes.includes(laneIdx) && usedLanes.length < level.lanes);
+          usedLanes.push(laneIdx);
+          const laneX = LANE_CENTERS[laneIdx];
+          obstaclesRef.current.push({
+            id: Math.random(),
+            type,
+            x: laneX,
+            y: -def.h - s * 30, // stagger vertically slightly
+            w: def.w,
+            h: def.h,
+            lane: laneIdx,
+          });
+        }
         lastSpawnRef.current = now;
       }
 
@@ -1682,8 +1720,8 @@ export default function CodeBlue() {
                 : `${Math.min(100, Math.floor((distanceRef.current / level.hospitalDistance) * 100))}% TO HOSPITAL`}
             </text>
 
-            {/* Heart attack meter */}
-            <HeartMeter percent={meter} />
+            {/* Survival meter */}
+            <SurvivalMeter percent={meter} />
 
             {/* Touch hint at start */}
             {distanceRef.current < 200 && (
