@@ -1026,6 +1026,8 @@ function EndScreen({ levelResults, onRestart, onShare }) {
   }, []);
 
   const stat = RANDOM_STATS[Math.floor(Math.random() * RANDOM_STATS.length)];
+  const deathResult = levelResults.find((r) => !r.survived);
+  const diedOnLevel = deathResult ? deathResult.level : null;
 
   return (
     <div
@@ -1062,7 +1064,7 @@ function EndScreen({ levelResults, onRestart, onShare }) {
         </div>
       </div>
 
-      {/* Phase 1: Results grid */}
+      {/* Phase 1: Results grid — built from actual levelResults */}
       {phase >= 1 && (
         <div
           style={{
@@ -1075,24 +1077,21 @@ function EndScreen({ levelResults, onRestart, onShare }) {
             marginBottom: "12px",
           }}
         >
-          {/* Urban */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#8888aa" }}>URBAN:</span>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color: "#33ff66" }}>&#x2665; SURVIVED</span>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#ccccdd" }}>4 min</span>
-          </div>
-          {/* Suburban */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#8888aa" }}>SUBURBAN:</span>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color: "#ffcc44" }}>&#x2665; SURVIVED</span>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#ccccdd" }}>18 min</span>
-          </div>
-          {/* Rural */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#8888aa" }}>RURAL:</span>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color: "#ff4444" }}>&#x2717; DECEASED</span>
-            <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#555566" }}>-- min</span>
-          </div>
+          {LEVELS.map((lvl, i) => {
+            const result = levelResults.find((r) => r.level === lvl.id);
+            const survived = result ? result.survived : false;
+            const played = !!result;
+            const color = !played ? "#555566" : survived ? (lvl.id === 1 ? "#33ff66" : "#ffcc44") : "#ff4444";
+            const statusText = !played ? "—" : survived ? "\u2665 SURVIVED" : "\u2717 DECEASED";
+            const timeText = !played ? "—" : survived ? lvl.treatmentTime : "-- min";
+            return (
+              <div key={lvl.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: i < LEVELS.length - 1 ? "10px" : "0" }}>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#8888aa" }}>{lvl.name}:</span>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color }}>{statusText}</span>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: survived ? "#ccccdd" : "#555566" }}>{timeText}</span>
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -1108,7 +1107,9 @@ function EndScreen({ levelResults, onRestart, onShare }) {
               marginBottom: "6px",
             }}
           >
-            Same heart attack. Same person.
+            {diedOnLevel && diedOnLevel <= 2
+              ? "Same heart attack. Same road."
+              : "Same heart attack. Same person."}
           </div>
           <div
             style={{
@@ -1118,7 +1119,9 @@ function EndScreen({ levelResults, onRestart, onShare }) {
               lineHeight: "2",
             }}
           >
-            The only thing that changed was the zip code.
+            {diedOnLevel && diedOnLevel <= 2
+              ? "The obstacles were too much."
+              : "The only thing that changed was the zip code."}
           </div>
         </div>
       )}
@@ -1397,6 +1400,11 @@ export default function CodeBlue() {
         meterRef.current = 100;
         cancelAnimationFrame(gameLoopRef.current);
         gameLoopRef.current = null;
+        // Record death on this level before going to end screen
+        setLevelResults((prev) => [
+          ...prev,
+          { level: level.id, survived: false, meter: 100 },
+        ]);
         setGameState("ended");
         return;
       }
@@ -1500,6 +1508,10 @@ export default function CodeBlue() {
           if (meterRef.current >= 100) {
             cancelAnimationFrame(gameLoopRef.current);
             gameLoopRef.current = null;
+            setLevelResults((prev) => [
+              ...prev,
+              { level: level.id, survived: false, meter: 100 },
+            ]);
             setGameState("ended");
             return false;
           }
@@ -1564,8 +1576,19 @@ export default function CodeBlue() {
   // ─── Share handler ───
   const handleShare = useCallback(async () => {
     const url = "https://games.andycantwin.com/codeblue";
-    const text =
-      "I survived the heart attack in the city (4 min). I survived in the suburbs (18 min). I didn't survive in rural NC.\n\nSame emergency. Different zip code.\n\nPlay 'Code Blue':";
+    // Build share text from actual results
+    const lines = [];
+    const urbanResult = levelResults.find((r) => r.level === 1);
+    const subResult = levelResults.find((r) => r.level === 2);
+    const ruralResult = levelResults.find((r) => r.level === 3);
+    if (urbanResult?.survived) lines.push("I survived the heart attack in the city (4 min).");
+    else if (urbanResult) lines.push("I didn't survive the heart attack in the city.");
+    if (subResult?.survived) lines.push("I survived in the suburbs (18 min).");
+    else if (subResult) lines.push("I didn't survive in the suburbs.");
+    if (ruralResult) lines.push("I didn't survive in rural NC.");
+    else if (urbanResult || subResult) lines.push("I never made it to rural NC.");
+    lines.push("\nSame emergency. Different zip code.\n\nPlay 'Code Blue':");
+    const text = lines.join(" ");
     if (navigator.share) {
       try {
         await navigator.share({ title: "Code Blue", text, url });
@@ -1578,7 +1601,7 @@ export default function CodeBlue() {
     } catch {
       prompt("Copy this link to share:", url);
     }
-  }, []);
+  }, [levelResults]);
 
   // ─── Read refs for rendering ───
   const playerX = playerXRef.current;
