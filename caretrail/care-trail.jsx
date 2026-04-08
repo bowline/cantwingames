@@ -3,14 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const PIXEL_FONT = `var(--font-pixel), "Press Start 2P", monospace`;
-const W = 360;
-const H = 740;
 const GREEN = "#33ff66";
 const DIM_GREEN = "#1a8833";
 const DARK = "#0a0a1a";
 const PANEL_BG = "#0d1a0d";
 const BORDER = "#1a3a1a";
-const FAINT = "#0a2a0a";
 
 // ─── PROFILES ────────────────────────────────────────────
 const PROFILES = [
@@ -289,23 +286,26 @@ function useTypewriter(lines, speed = 30) {
   return { displayed, done, skip };
 }
 
-// ─── SVG WRAPPED TEXT ────────────────────────────────────
-function TerminalText({ lines, x, y, fontSize = 6, fill = GREEN, lineHeight = 14 }) {
+// ─── TERMINAL BACKGROUND LINES ──────────────────────────
+function TerminalBgLines() {
   return (
-    <g>
-      {lines.map((line, i) => (
-        <text
+    <>
+      {[...Array(20)].map((_, i) => (
+        <div
           key={i}
-          x={x}
-          y={y + i * lineHeight}
-          fontSize={fontSize}
-          fill={fill}
-          fontFamily={PIXEL_FONT}
-        >
-          {line}
-        </text>
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: i * 37,
+            height: 1,
+            background: GREEN,
+            opacity: 0.03,
+            pointerEvents: "none",
+          }}
+        />
       ))}
-    </g>
+    </>
   );
 }
 
@@ -333,227 +333,279 @@ function TitleScreen({ onStart }) {
   };
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block" }}>
-      <rect width={W} height={H} fill={DARK} />
-
-      {/* Terminal glow lines in background */}
-      {[...Array(20)].map((_, i) => (
-        <rect key={i} x={0} y={i * 37} width={W} height={1} fill={GREEN} opacity={0.03} />
-      ))}
+    <div style={{ flex: 1, overflowY: "auto", padding: "16px", position: "relative" }}>
+      <TerminalBgLines />
 
       {/* Terminal header */}
-      <text x={20} y={80} fontSize="4.5" fill={DIM_GREEN} fontFamily={PIXEL_FONT}>
-        {'>'} LOADING HEALTHCARE.SYS...
-      </text>
-      <text x={20} y={95} fontSize="4.5" fill={DIM_GREEN} fontFamily={PIXEL_FONT}>
-        {'>'} COVERAGE: NOT FOUND
-      </text>
-      <text x={20} y={110} fontSize="4.5" fill={DIM_GREEN} fontFamily={PIXEL_FONT}>
-        {'>'} DEDUCTIBLE: $8,000
-      </text>
-      <text x={20} y={125} fontSize="4.5" fill="#ff4444" fontFamily={PIXEL_FONT}>
-        {'>'} ERROR: SYSTEM NOT DESIGNED FOR YOU
-      </text>
+      <div style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: DIM_GREEN, lineHeight: "2", marginTop: 24 }}>
+        <div>{">"} LOADING HEALTHCARE.SYS...</div>
+        <div>{">"} COVERAGE: NOT FOUND</div>
+        <div>{">"} DEDUCTIBLE: $8,000</div>
+        <div style={{ color: "#ff4444" }}>{">"} ERROR: SYSTEM NOT DESIGNED FOR YOU</div>
+      </div>
 
       {/* Title */}
-      <text x={W / 2} y={185} textAnchor="middle" fontSize="16" fill={GREEN} fontFamily={PIXEL_FONT}
-        stroke="#0a2a0a" strokeWidth="3" paintOrder="stroke">
-        THE CARE
-      </text>
-      <text x={W / 2} y={215} textAnchor="middle" fontSize="16" fill={GREEN} fontFamily={PIXEL_FONT}
-        stroke="#0a2a0a" strokeWidth="3" paintOrder="stroke">
-        TRAIL
-      </text>
+      <div style={{
+        fontFamily: PIXEL_FONT,
+        fontSize: 28,
+        color: GREEN,
+        textAlign: "center",
+        marginTop: 28,
+        lineHeight: "1.4",
+        textShadow: "0 0 10px rgba(51,255,102,0.3)",
+      }}>
+        <div>THE CARE</div>
+        <div>TRAIL</div>
+      </div>
 
       {/* Subtitle */}
-      <text x={W / 2} y={250} textAnchor="middle" fontSize="5" fill="#88cc88" fontFamily={PIXEL_FONT}>
-        NAVIGATE THE AMERICAN
-      </text>
-      <text x={W / 2} y={264} textAnchor="middle" fontSize="5" fill="#88cc88" fontFamily={PIXEL_FONT}>
-        HEALTHCARE SYSTEM.
-      </text>
-      <text x={W / 2} y={282} textAnchor="middle" fontSize="5.5" fill="#ff6666" fontFamily={PIXEL_FONT}>
-        TRY NOT TO GO BANKRUPT.
-      </text>
+      <div style={{
+        fontFamily: PIXEL_FONT,
+        fontSize: 10,
+        color: "#88cc88",
+        textAlign: "center",
+        marginTop: 16,
+        lineHeight: "2",
+      }}>
+        <div>NAVIGATE THE AMERICAN</div>
+        <div>HEALTHCARE SYSTEM.</div>
+        <div style={{ color: "#ff6666", fontSize: 10, marginTop: 4 }}>TRY NOT TO GO BANKRUPT.</div>
+      </div>
 
       {/* Blinking cursor */}
-      <rect x={W / 2 + 80} y={270} width={8} height={2} fill={GREEN} opacity={cursorVisible ? 0.7 : 0} />
+      <div style={{
+        width: 12,
+        height: 3,
+        background: GREEN,
+        opacity: cursorVisible ? 0.7 : 0,
+        margin: "4px auto 0",
+      }} />
 
       {/* Start + Share buttons */}
-      <g cursor="pointer" onClick={onStart}>
-        <rect x={60} y={310} width={140} height={32} rx={3}
-          fill={blink ? "#1a4a1a" : "#0d3a0d"} stroke={GREEN} strokeWidth={1} />
-        <text x={130} y={331} textAnchor="middle" fontSize="11" fill={GREEN} fontFamily={PIXEL_FONT}>
-          {'>'} START
-        </text>
-      </g>
+      <div style={{ display: "flex", gap: 12, marginTop: 20, justifyContent: "center" }}>
+        <button
+          onClick={onStart}
+          style={{
+            fontFamily: PIXEL_FONT,
+            fontSize: 16,
+            color: GREEN,
+            background: blink ? "#1a4a1a" : "#0d3a0d",
+            border: `1px solid ${GREEN}`,
+            borderRadius: 3,
+            padding: "10px 32px",
+            cursor: "pointer",
+            minHeight: 48,
+          }}
+        >
+          {">"} START
+        </button>
 
-      <g cursor="pointer" onClick={shareTitle}>
-        <rect x={210} y={310} width={80} height={32} rx={3}
-          fill="#dd6644" stroke="#ee7755" strokeWidth={1} />
-        <text x={250} y={331} textAnchor="middle" fontSize="9" fill="#fff" fontFamily={PIXEL_FONT}>
+        <button
+          onClick={shareTitle}
+          style={{
+            fontFamily: PIXEL_FONT,
+            fontSize: 14,
+            color: "#fff",
+            background: "#dd6644",
+            border: "1px solid #ee7755",
+            borderRadius: 3,
+            padding: "10px 20px",
+            cursor: "pointer",
+            minHeight: 48,
+          }}
+        >
           SHARE
-        </text>
-      </g>
+        </button>
+      </div>
 
       {/* Preview stats */}
-      <rect x={20} y={370} width={W - 40} height={100} fill={PANEL_BG} rx={4} stroke={BORDER} strokeWidth={1} />
-      <text x={W / 2} y={390} textAnchor="middle" fontSize="5" fill="#88cc88" fontFamily={PIXEL_FONT}>
-        CHOOSE YOUR PATIENT:
-      </text>
-      {PROFILES.map((p, i) => (
-        <g key={p.id}>
-          <rect x={30} y={400 + i * 16} width={6} height={6} fill={p.color} rx={1} />
-          <text x={42} y={406 + i * 16} fontSize="4.5" fill={p.color} fontFamily={PIXEL_FONT}>
-            {p.name}
-          </text>
-          <text x={W - 30} y={406 + i * 16} textAnchor="end" fontSize="4" fill="#556655" fontFamily={PIXEL_FONT}>
-            {p.difficulty}
-          </text>
-        </g>
-      ))}
+      <div style={{
+        background: PANEL_BG,
+        border: `1px solid ${BORDER}`,
+        borderRadius: 4,
+        padding: "12px 14px",
+        marginTop: 20,
+      }}>
+        <div style={{
+          fontFamily: PIXEL_FONT,
+          fontSize: 9,
+          color: "#88cc88",
+          textAlign: "center",
+          marginBottom: 10,
+        }}>
+          CHOOSE YOUR PATIENT:
+        </div>
+        {PROFILES.map((p) => (
+          <div key={p.id} style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 6,
+          }}>
+            <div style={{ width: 8, height: 8, background: p.color, borderRadius: 2, flexShrink: 0 }} />
+            <span style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: p.color, flex: 1 }}>{p.name}</span>
+            <span style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#556655" }}>{p.difficulty}</span>
+          </div>
+        ))}
+      </div>
 
       {/* Sources */}
-      <text x={W / 2} y={500} textAnchor="middle" fontSize="3.5" fill="#334433" fontFamily={PIXEL_FONT}>
-        KFF · CENSUS BUREAU · NC DHHS · COMMONWEALTH FUND
-      </text>
-      <text x={W / 2} y={512} textAnchor="middle" fontSize="3.5" fill="#334433" fontFamily={PIXEL_FONT}>
-        COSTS BASED ON ACTUAL NC HEALTHCARE DATA
-      </text>
+      <div style={{
+        fontFamily: PIXEL_FONT,
+        fontSize: 7,
+        color: "#334433",
+        textAlign: "center",
+        marginTop: 16,
+        lineHeight: "1.8",
+      }}>
+        <div>KFF · CENSUS BUREAU · NC DHHS · COMMONWEALTH FUND</div>
+        <div>COSTS BASED ON ACTUAL NC HEALTHCARE DATA</div>
+      </div>
 
       {/* Donate button */}
-      <a href="https://secure.actblue.com/donate/andybowline" target="_blank" rel="noopener noreferrer">
-        <g cursor="pointer">
-          <rect x={W / 2 - 135} y={535} width={270} height={38} rx={3}
-            fill="#1a3a1a" stroke="#3a6a3a" strokeWidth={1.5} />
-          <text x={W / 2} y={550} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
-            CHIP IN $5? YOUR COPAY WAS HIGHER.
-          </text>
-          <text x={W / 2} y={565} textAnchor="middle" fontSize="7" fill="#44ff44" fontFamily={PIXEL_FONT}>
-            DONATE →
-          </text>
-        </g>
+      <a
+        href="https://secure.actblue.com/donate/andybowline"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "block",
+          background: "#1a3a1a",
+          border: "1.5px solid #3a6a3a",
+          borderRadius: 3,
+          padding: "10px 14px",
+          marginTop: 16,
+          textAlign: "center",
+          textDecoration: "none",
+        }}
+      >
+        <div style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: "#88dd88", marginBottom: 4 }}>
+          CHIP IN $5? YOUR COPAY WAS HIGHER.
+        </div>
+        <div style={{ fontFamily: PIXEL_FONT, fontSize: 12, color: "#44ff44" }}>
+          DONATE →
+        </div>
       </a>
 
       {/* Campaign link */}
-      <a href="https://andycantwin.com" target="_blank" rel="noopener noreferrer">
-        <text x={W / 2} y={600} textAnchor="middle" fontSize="4" fill={DIM_GREEN} fontFamily={PIXEL_FONT} cursor="pointer">
+      <a
+        href="https://andycantwin.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "block",
+          textAlign: "center",
+          textDecoration: "none",
+          marginTop: 16,
+        }}
+      >
+        <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: DIM_GREEN }}>
           ANDY BOWLINE · NC SENATE · DISTRICT 31
-        </text>
-        <text x={W / 2} y={614} textAnchor="middle" fontSize="4" fill={DIM_GREEN} fontFamily={PIXEL_FONT} cursor="pointer">
+        </div>
+        <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: DIM_GREEN, marginTop: 4 }}>
           CAN'T WIN. YET.
-        </text>
+        </div>
       </a>
 
       {/* Tap to start */}
-      <text x={W / 2} y={660} textAnchor="middle" fontSize="5" fill={GREEN} fontFamily={PIXEL_FONT}
-        opacity={blink ? 0.8 : 0.3}>
+      <div style={{
+        fontFamily: PIXEL_FONT,
+        fontSize: 10,
+        color: GREEN,
+        textAlign: "center",
+        marginTop: 20,
+        opacity: blink ? 0.8 : 0.3,
+        paddingBottom: 16,
+      }}>
         TAP TO START
-      </text>
-    </svg>
+      </div>
+    </div>
   );
 }
 
 // ─── SETUP SCREEN (Profile Select) ──────────────────────
 function SetupScreen({ onSelect }) {
-  const [selected, setSelected] = useState(null);
-
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block" }}>
-      <rect width={W} height={H} fill={DARK} />
+    <div style={{ flex: 1, overflowY: "auto", padding: "16px", position: "relative" }}>
+      <TerminalBgLines />
 
-      {/* Terminal lines background */}
-      {[...Array(20)].map((_, i) => (
-        <rect key={i} x={0} y={i * 37} width={W} height={1} fill={GREEN} opacity={0.03} />
-      ))}
-
-      <text x={W / 2} y={45} textAnchor="middle" fontSize="8" fill={GREEN} fontFamily={PIXEL_FONT}>
+      <div style={{
+        fontFamily: PIXEL_FONT,
+        fontSize: 16,
+        color: GREEN,
+        textAlign: "center",
+        marginTop: 8,
+        marginBottom: 4,
+      }}>
         SELECT YOUR PATIENT
-      </text>
-      <text x={W / 2} y={65} textAnchor="middle" fontSize="4.5" fill="#558855" fontFamily={PIXEL_FONT}>
+      </div>
+      <div style={{
+        fontFamily: PIXEL_FONT,
+        fontSize: 9,
+        color: "#558855",
+        textAlign: "center",
+        marginBottom: 16,
+      }}>
         EACH PATH IS DIFFERENT. NONE ARE EASY.
-      </text>
+      </div>
 
-      {PROFILES.map((p, i) => {
-        const cardY = 85 + i * 155;
-        const isSelected = selected === p.id;
-        return (
-          <g
-            key={p.id}
-            cursor="pointer"
-            onClick={() => setSelected(p.id)}
-            onDoubleClick={() => onSelect(p)}
-          >
-            <rect x={20} y={cardY} width={W - 40} height={140} rx={4}
-              fill={isSelected ? "#0d2a0d" : PANEL_BG}
-              stroke={isSelected ? GREEN : BORDER}
-              strokeWidth={isSelected ? 2 : 1} />
+      {PROFILES.map((p) => (
+        <button
+          key={p.id}
+          onClick={() => onSelect(p)}
+          style={{
+            display: "block",
+            width: "100%",
+            background: PANEL_BG,
+            border: `1px solid ${BORDER}`,
+            borderRadius: 4,
+            padding: "14px",
+            marginBottom: 12,
+            cursor: "pointer",
+            textAlign: "left",
+          }}
+        >
+          {/* Name + difficulty */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+            <span style={{ fontFamily: PIXEL_FONT, fontSize: 12, color: p.color }}>{p.name}</span>
+            <span style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: "#556655" }}>{p.difficulty}</span>
+          </div>
 
-            {/* Name + difficulty */}
-            <text x={32} y={cardY + 20} fontSize="7" fill={p.color} fontFamily={PIXEL_FONT}>
-              {p.name}
-            </text>
-            <text x={W - 32} y={cardY + 20} textAnchor="end" fontSize="5" fill="#556655" fontFamily={PIXEL_FONT}>
-              {p.difficulty}
-            </text>
+          {/* Insurance */}
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: "#88aa88", marginBottom: 10 }}>
+            INSURANCE: {p.insuranceShort}
+          </div>
 
-            {/* Insurance */}
-            <text x={32} y={cardY + 38} fontSize="4.5" fill="#88aa88" fontFamily={PIXEL_FONT}>
-              INSURANCE: {p.insuranceShort}
-            </text>
+          {/* Stats row */}
+          <div style={{ display: "flex", gap: 20, marginBottom: 10 }}>
+            <div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: 11, color: GREEN }}>${p.cash}</div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855" }}>SAVINGS</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: 11, color: "#ff6666" }}>{p.health}/100</div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855" }}>HEALTH</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: 11, color: "#aaaacc" }}>{p.familyLabel}</div>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855" }}>PATIENT</div>
+            </div>
+          </div>
 
-            {/* Stats */}
-            <text x={32} y={cardY + 58} fontSize="5" fill={GREEN} fontFamily={PIXEL_FONT}>
-              ${p.cash}
-            </text>
-            <text x={32} y={cardY + 70} fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>
-              SAVINGS
-            </text>
+          {/* Description */}
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#667766", marginBottom: 6 }}>
+            {p.insurance.toUpperCase()}
+          </div>
 
-            <text x={130} y={cardY + 58} fontSize="5" fill="#ff6666" fontFamily={PIXEL_FONT}>
-              {p.health}/100
-            </text>
-            <text x={130} y={cardY + 70} fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>
-              HEALTH
-            </text>
-
-            <text x={230} y={cardY + 58} fontSize="5" fill="#aaaacc" fontFamily={PIXEL_FONT}>
-              {p.familyLabel}
-            </text>
-            <text x={230} y={cardY + 70} fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>
-              PATIENT
-            </text>
-
-            {/* Description */}
-            <text x={32} y={cardY + 92} fontSize="4" fill="#667766" fontFamily={PIXEL_FONT}>
-              {p.insurance.toUpperCase()}
-            </text>
-
-            {/* Flavor */}
-            <text x={32} y={cardY + 110} fontSize="4" fill="#556655" fontFamily={PIXEL_FONT}>
-              {p.id === "teacher" ? `${p.familyLabel} GETS SICK. YOU HAVE "GOOD" INSURANCE.` :
-               p.id === "gig" ? "YOU GET SICK. YOU HAVE NO INSURANCE." :
-               p.id === "parent" ? `${p.familyLabel} GETS SICK. YOUR PLAN COVERS ALMOST NOTHING.` :
-               `${p.familyLabel} GETS SICK. MEDICARE HAS GAPS.`}
-            </text>
-
-            {/* Select indicator */}
-            {isSelected && (
-              <text x={W - 38} y={cardY + 130} textAnchor="end" fontSize="5" fill={GREEN} fontFamily={PIXEL_FONT}>
-                {'>'} TAP AGAIN
-              </text>
-            )}
-          </g>
-        );
-      })}
-
-      {/* Confirm button — only when selected */}
-      {selected && (
-        <g cursor="pointer" onClick={() => onSelect(PROFILES.find(p => p.id === selected))}>
-          <rect x={60} y={710} width={W - 120} height={0} rx={0} fill="transparent" />
-        </g>
-      )}
-    </svg>
+          {/* Flavor */}
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#556655" }}>
+            {p.id === "teacher" ? `${p.familyLabel} GETS SICK. YOU HAVE "GOOD" INSURANCE.` :
+             p.id === "gig" ? "YOU GET SICK. YOU HAVE NO INSURANCE." :
+             p.id === "parent" ? `${p.familyLabel} GETS SICK. YOUR PLAN COVERS ALMOST NOTHING.` :
+             `${p.familyLabel} GETS SICK. MEDICARE HAS GAPS.`}
+          </div>
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -572,6 +624,9 @@ function PlayingScreen({ profile, onEnd }) {
   const [dead, setDead] = useState(false);
   const [erChosen, setErChosen] = useState(false);
   const [disputeWon, setDisputeWon] = useState(false);
+
+  // Use a ref for the dead flag to fix the death screen bug
+  const deadRef = useRef(false);
 
   const stops = useRef(getStops(profile)).current;
   const currentStop = stops[stopIndex];
@@ -661,16 +716,17 @@ function PlayingScreen({ profile, onEnd }) {
     }
   }, [stopIndex]);
 
-  // Check for death
+  // Check for death — use ref to prevent cleanup from cancelling the timeout
   useEffect(() => {
-    if (health <= 0 && !dead) {
+    if (health <= 0 && !deadRef.current) {
+      deadRef.current = true;
       setDead(true);
       const t = setTimeout(() => {
         onEnd({ health: 0, money, days, billItems, dead: true, profile });
-      }, 2000);
+      }, 2500);
       return () => clearTimeout(t);
     }
-  }, [health, dead, money, days, billItems, onEnd, profile]);
+  }, [health, money, days, billItems, onEnd, profile]);
 
   const handleChoice = (choice) => {
     let newHealth = health + choice.health;
@@ -734,27 +790,14 @@ function PlayingScreen({ profile, onEnd }) {
     setBillItems(newBillItems);
     setShowChoices(false);
 
-    // Build narrative text
+    // Build narrative text — no manual word-wrapping needed for HTML
     let narText = choice.narrative;
     if (choice.dispute) {
       narText += disputeWon ? " They take $200 off." : " They don't budge.";
     }
 
-    const narLines = [];
-    const words = narText.split(" ");
-    let line = "";
-    for (const word of words) {
-      if ((line + " " + word).length > 28) {
-        narLines.push(line.trim());
-        line = word;
-      } else {
-        line += " " + word;
-      }
-    }
-    if (line.trim()) narLines.push(line.trim());
-
     setNarrative(true);
-    setNarrativeLines(narLines);
+    setNarrativeLines([narText]);
   };
 
   const advanceStop = () => {
@@ -768,175 +811,284 @@ function PlayingScreen({ profile, onEnd }) {
 
   if (dead) {
     return (
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block" }}>
-        <rect width={W} height={H} fill={DARK} />
-        <text x={W / 2} y={300} textAnchor="middle" fontSize="7" fill="#ff4444" fontFamily={PIXEL_FONT}>
-          {profile.familyMember.toUpperCase()}
-        </text>
-        <text x={W / 2} y={330} textAnchor="middle" fontSize="7" fill="#ff4444" fontFamily={PIXEL_FONT}>
-          HAS DIED OF A
-        </text>
-        <text x={W / 2} y={360} textAnchor="middle" fontSize="7" fill="#ff4444" fontFamily={PIXEL_FONT}>
-          PREVENTABLE CONDITION.
-        </text>
-        <text x={W / 2} y={410} textAnchor="middle" fontSize="5" fill="#884444" fontFamily={PIXEL_FONT}>
+      <div style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 16,
+        position: "relative",
+      }}>
+        <TerminalBgLines />
+        <div style={{
+          fontFamily: PIXEL_FONT,
+          fontSize: 14,
+          color: "#ff4444",
+          textAlign: "center",
+          lineHeight: "2",
+        }}>
+          <div>{profile.familyMember.toUpperCase()}</div>
+          <div>HAS DIED OF A</div>
+          <div>PREVENTABLE CONDITION.</div>
+        </div>
+        <div style={{
+          fontFamily: PIXEL_FONT,
+          fontSize: 10,
+          color: "#884444",
+          textAlign: "center",
+          marginTop: 20,
+        }}>
           DAY {days} · ${money} REMAINING
-        </text>
-      </svg>
+        </div>
+      </div>
     );
   }
 
   const totalBill = billItems.reduce((sum, b) => sum + b.cost, 0);
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      style={{ width: "100%", display: "block" }}
-      onClick={() => {
-        if (!typewriterDone && !narrative) skipTypewriter();
-        else if (narrative && !narrativeDone) skipNarrative();
-      }}
-    >
-      <rect width={W} height={H} fill={DARK} />
-
-      {/* Terminal lines background */}
-      {[...Array(20)].map((_, i) => (
-        <rect key={i} x={0} y={i * 37} width={W} height={1} fill={GREEN} opacity={0.02} />
-      ))}
-
+    <>
       {/* ─── TOP BAR (Resources) ─── */}
-      <rect x={0} y={0} width={W} height={52} fill="#050d05" />
-      <rect x={0} y={52} width={W} height={1} fill={DIM_GREEN} opacity={0.3} />
+      <div
+        style={{
+          background: "#050d05",
+          borderBottom: `1px solid ${DIM_GREEN}33`,
+          padding: "8px 16px 10px",
+          flexShrink: 0,
+          zIndex: 10,
+        }}
+        onClick={() => {
+          if (!typewriterDone && !narrative) skipTypewriter();
+          else if (narrative && !narrativeDone) skipNarrative();
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          {/* Health */}
+          <div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855", marginBottom: 4 }}>HEALTH</div>
+            <div style={{
+              width: 80,
+              height: 8,
+              background: "#1a1a1a",
+              borderRadius: 2,
+              marginBottom: 4,
+              overflow: "hidden",
+            }}>
+              <div style={{
+                width: `${Math.max(0, health)}%`,
+                height: "100%",
+                background: health > 50 ? GREEN : health > 25 ? "#ccaa33" : "#ff4444",
+                borderRadius: 2,
+                transition: "width 0.3s",
+              }} />
+            </div>
+            <div style={{
+              fontFamily: PIXEL_FONT,
+              fontSize: 10,
+              color: health > 50 ? GREEN : health > 25 ? "#ccaa33" : "#ff4444",
+            }}>
+              {health}/100
+            </div>
+          </div>
 
-      {/* Health */}
-      <text x={20} y={18} fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>HEALTH</text>
-      <rect x={20} y={22} width={80} height={8} fill="#1a1a1a" rx={2} />
-      <rect x={20} y={22} width={Math.max(0, 80 * (health / 100))} height={8}
-        fill={health > 50 ? GREEN : health > 25 ? "#ccaa33" : "#ff4444"} rx={2} />
-      <text x={20} y={42} fontSize="5" fill={health > 50 ? GREEN : health > 25 ? "#ccaa33" : "#ff4444"} fontFamily={PIXEL_FONT}>
-        {health}/100
-      </text>
+          {/* Money */}
+          <div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855", marginBottom: 4 }}>SAVINGS</div>
+            <div style={{
+              fontFamily: PIXEL_FONT,
+              fontSize: 12,
+              color: money >= 0 ? GREEN : "#ff4444",
+              marginTop: 12,
+            }}>
+              {money < 0 ? `-$${Math.abs(money)}` : `$${money}`}
+            </div>
+          </div>
 
-      {/* Money */}
-      <text x={130} y={18} fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>SAVINGS</text>
-      <text x={130} y={42} fontSize="6" fill={money >= 0 ? GREEN : "#ff4444"} fontFamily={PIXEL_FONT}>
-        {money < 0 ? `-$${Math.abs(money)}` : `$${money}`}
-      </text>
+          {/* Days */}
+          <div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855", marginBottom: 4 }}>DAYS</div>
+            <div style={{
+              fontFamily: PIXEL_FONT,
+              fontSize: 12,
+              color: "#aaaacc",
+              marginTop: 12,
+            }}>
+              {days}
+            </div>
+          </div>
+        </div>
 
-      {/* Days */}
-      <text x={250} y={18} fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>DAYS</text>
-      <text x={250} y={42} fontSize="6" fill="#aaaacc" fontFamily={PIXEL_FONT}>
-        {days}
-      </text>
+        {/* Profile tag */}
+        <div style={{
+          fontFamily: PIXEL_FONT,
+          fontSize: 7,
+          color: profile.color,
+          textAlign: "right",
+          marginTop: 2,
+        }}>
+          {profile.name}
+        </div>
+      </div>
 
-      {/* Profile tag */}
-      <text x={W - 10} y={18} textAnchor="end" fontSize="3.5" fill={profile.color} fontFamily={PIXEL_FONT}>
-        {profile.name}
-      </text>
+      {/* ─── SCROLLABLE CONTENT ─── */}
+      <div
+        style={{ flex: 1, overflowY: "auto", padding: "16px", position: "relative" }}
+        onClick={() => {
+          if (!typewriterDone && !narrative) skipTypewriter();
+          else if (narrative && !narrativeDone) skipNarrative();
+        }}
+      >
+        <TerminalBgLines />
 
-      {/* ─── STOP TITLE ─── */}
-      <text x={20} y={82} fontSize="6" fill={GREEN} fontFamily={PIXEL_FONT}>
-        {currentStop.title}
-      </text>
-      <rect x={20} y={87} width={W - 40} height={1} fill={DIM_GREEN} opacity={0.3} />
+        {/* ─── STOP TITLE ─── */}
+        <div style={{
+          fontFamily: PIXEL_FONT,
+          fontSize: 11,
+          color: GREEN,
+          marginBottom: 4,
+        }}>
+          {currentStop.title}
+        </div>
+        <div style={{ height: 1, background: `${DIM_GREEN}4d`, marginBottom: 16 }} />
 
-      {/* ─── NARRATIVE / TYPEWRITER TEXT ─── */}
-      {!narrative && (
-        <TerminalText
-          lines={typewriterLines}
-          x={20}
-          y={112}
-          fontSize={5.5}
-          fill={GREEN}
-          lineHeight={15}
-        />
-      )}
+        {/* ─── NARRATIVE / TYPEWRITER TEXT ─── */}
+        {!narrative && (
+          <div style={{
+            fontFamily: PIXEL_FONT,
+            fontSize: 11,
+            color: GREEN,
+            lineHeight: "2.2",
+            minHeight: 60,
+          }}>
+            {typewriterLines.map((line, i) => (
+              <div key={i}>{line || "\u00A0"}</div>
+            ))}
+          </div>
+        )}
 
-      {narrative && (
-        <g>
-          <TerminalText
-            lines={narrativeDisplayed}
-            x={20}
-            y={112}
-            fontSize={5.5}
-            fill="#88cc88"
-            lineHeight={15}
-          />
-          {narrativeDone && (
-            <g cursor="pointer" onClick={(e) => { e.stopPropagation(); advanceStop(); }}>
-              <rect x={W / 2 - 80} y={112 + narrativeDisplayed.length * 15 + 20} width={160} height={34} rx={3}
-                fill="#1a4a1a" stroke={GREEN} strokeWidth={1} />
-              <text x={W / 2} y={112 + narrativeDisplayed.length * 15 + 42}
-                textAnchor="middle" fontSize="7" fill={GREEN} fontFamily={PIXEL_FONT}>
-                {'>'} CONTINUE
-              </text>
-            </g>
-          )}
-        </g>
-      )}
+        {narrative && (
+          <div>
+            <div style={{
+              fontFamily: PIXEL_FONT,
+              fontSize: 11,
+              color: "#88cc88",
+              lineHeight: "2.2",
+              minHeight: 60,
+            }}>
+              {narrativeDisplayed.map((line, i) => (
+                <div key={i}>{line || "\u00A0"}</div>
+              ))}
+            </div>
+            {narrativeDone && (
+              <button
+                onClick={(e) => { e.stopPropagation(); advanceStop(); }}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  maxWidth: 240,
+                  margin: "20px auto 0",
+                  fontFamily: PIXEL_FONT,
+                  fontSize: 14,
+                  color: GREEN,
+                  background: "#1a4a1a",
+                  border: `1px solid ${GREEN}`,
+                  borderRadius: 3,
+                  padding: "12px 16px",
+                  cursor: "pointer",
+                  minHeight: 48,
+                }}
+              >
+                {">"} CONTINUE
+              </button>
+            )}
+          </div>
+        )}
 
-      {/* ─── BILL REVEAL (Stop 6) ─── */}
-      {showBillReveal && !narrative && (
-        <g>
-          <rect x={20} y={230} width={W - 40} height={16 + Math.min(billRevealIndex, billItems.length) * 18 + (billRevealIndex >= billItems.length ? 24 : 0)}
-            fill="#0a0a0a" rx={3} stroke="#333" strokeWidth={1} />
-          <text x={30} y={244} fontSize="5" fill="#888888" fontFamily={PIXEL_FONT}>
-            ITEMIZED CHARGES:
-          </text>
-          {billItems.slice(0, billRevealIndex).map((item, i) => (
-            <g key={i}>
-              <text x={30} y={264 + i * 18} fontSize="5" fill={GREEN} fontFamily={PIXEL_FONT}>
-                {item.name}
-              </text>
-              <text x={W - 30} y={264 + i * 18} textAnchor="end" fontSize="5" fill="#ff6666" fontFamily={PIXEL_FONT}>
-                ${item.cost}
-              </text>
-            </g>
-          ))}
-          {billRevealIndex >= billItems.length && (
-            <g>
-              <rect x={30} y={264 + billItems.length * 18} width={W - 60} height={1} fill="#555" />
-              <text x={30} y={280 + billItems.length * 18} fontSize="6" fill="#ffffff" fontFamily={PIXEL_FONT}>
-                TOTAL
-              </text>
-              <text x={W - 30} y={280 + billItems.length * 18} textAnchor="end" fontSize="6" fill="#ff4444" fontFamily={PIXEL_FONT}>
-                ${totalBill}
-              </text>
-            </g>
-          )}
-        </g>
-      )}
+        {/* ─── BILL REVEAL (Stop 6) ─── */}
+        {showBillReveal && !narrative && (
+          <div style={{
+            background: "#0a0a0a",
+            border: "1px solid #333",
+            borderRadius: 3,
+            padding: "12px 14px",
+            marginTop: 16,
+          }}>
+            <div style={{
+              fontFamily: PIXEL_FONT,
+              fontSize: 10,
+              color: "#888888",
+              marginBottom: 10,
+            }}>
+              ITEMIZED CHARGES:
+            </div>
+            {billItems.slice(0, billRevealIndex).map((item, i) => (
+              <div key={i} style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: 8,
+              }}>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: 10, color: GREEN }}>{item.name}</span>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: 10, color: "#ff6666" }}>${item.cost}</span>
+              </div>
+            ))}
+            {billRevealIndex >= billItems.length && (
+              <div>
+                <div style={{ height: 1, background: "#555", margin: "8px 0" }} />
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ fontFamily: PIXEL_FONT, fontSize: 12, color: "#ffffff" }}>TOTAL</span>
+                  <span style={{ fontFamily: PIXEL_FONT, fontSize: 12, color: "#ff4444" }}>${totalBill}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
-      {/* ─── CHOICES ─── */}
-      {showChoices && !narrative && currentStop.choices.length > 0 && (
-        <g>
-          {currentStop.choices.map((choice, i) => {
-            const choiceY = currentStop.isBillStop
-              ? 290 + billItems.length * 18 + 30 + i * 52
-              : Math.max(112 + (currentStop.text.length) * 15 + 30, 250) + i * 52;
-            return (
-              <g key={i} cursor="pointer" onClick={(e) => { e.stopPropagation(); handleChoice(choice); }}>
-                <rect x={20} y={choiceY} width={W - 40} height={44} rx={3}
-                  fill="#0d1a0d" stroke={DIM_GREEN} strokeWidth={1} />
-                <text x={32} y={choiceY + 18} fontSize="6" fill={GREEN} fontFamily={PIXEL_FONT}>
-                  {'>'} {choice.label}
-                </text>
-                <text x={32} y={choiceY + 34} fontSize="4.5" fill="#558855" fontFamily={PIXEL_FONT}>
+        {/* ─── CHOICES ─── */}
+        {showChoices && !narrative && currentStop.choices.length > 0 && (
+          <div style={{ marginTop: 20 }}>
+            {currentStop.choices.map((choice, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.stopPropagation(); handleChoice(choice); }}
+                style={{
+                  display: "block",
+                  width: "100%",
+                  background: "#0d1a0d",
+                  border: `1px solid ${DIM_GREEN}`,
+                  borderRadius: 3,
+                  padding: "12px 14px",
+                  marginBottom: 10,
+                  cursor: "pointer",
+                  textAlign: "left",
+                  minHeight: 48,
+                }}
+              >
+                <div style={{ fontFamily: PIXEL_FONT, fontSize: 12, color: GREEN, marginBottom: 4 }}>
+                  {">"} {choice.label}
+                </div>
+                <div style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: "#558855" }}>
                   {choice.desc}
-                </text>
-              </g>
-            );
-          })}
-        </g>
-      )}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
 
-      {/* Final stop — auto-advance indicator */}
-      {currentStop.isFinal && typewriterDone && (
-        <text x={W / 2} y={112 + currentStop.text.length * 15 + 40} textAnchor="middle" fontSize="5" fill={DIM_GREEN} fontFamily={PIXEL_FONT}>
-          ...
-        </text>
-      )}
-    </svg>
+        {/* Final stop — auto-advance indicator */}
+        {currentStop.isFinal && typewriterDone && (
+          <div style={{
+            fontFamily: PIXEL_FONT,
+            fontSize: 10,
+            color: DIM_GREEN,
+            textAlign: "center",
+            marginTop: 24,
+          }}>
+            ...
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -956,20 +1108,6 @@ function EndScreen({ stats }) {
   const survived = stats.health > 0 && !stats.dead;
   const fm = stats.profile.familyMember.toUpperCase();
 
-  // Word-wrap the random stat
-  const statWords = statRef.current.split(" ");
-  const statLines = [];
-  let statLine = "";
-  for (const word of statWords) {
-    if ((statLine + " " + word).length > 34) {
-      statLines.push(statLine.trim());
-      statLine = word;
-    } else {
-      statLine += " " + word;
-    }
-  }
-  if (statLine.trim()) statLines.push(statLine.trim());
-
   const shareResult = () => {
     const outcome = survived ? "survived" : "didn't make it";
     const text = `I played The Care Trail as ${stats.profile.name}.\n\n${fm} ${outcome}.\nTotal cost: $${totalCost}\nDays: ${stats.days}\nHealth: ${stats.health}/100\n\nEvery obstacle in this game is real.\n\nhttps://games.andycantwin.com/caretrail`;
@@ -984,176 +1122,246 @@ function EndScreen({ stats }) {
   };
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", display: "block" }}>
-      <rect width={W} height={H} fill={DARK} />
-
-      {/* Terminal lines background */}
-      {[...Array(20)].map((_, i) => (
-        <rect key={i} x={0} y={i * 37} width={W} height={1} fill={GREEN} opacity={0.02} />
-      ))}
+    <div style={{ flex: 1, overflowY: "auto", padding: "16px", position: "relative" }}>
+      <TerminalBgLines />
 
       {/* Phase 0: Result header */}
-      <text x={W / 2} y={50} textAnchor="middle" fontSize="8" fill={GREEN} fontFamily={PIXEL_FONT}
-        stroke="#0a2a0a" strokeWidth="2" paintOrder="stroke">
+      <div style={{
+        fontFamily: PIXEL_FONT,
+        fontSize: 16,
+        color: GREEN,
+        textAlign: "center",
+        marginTop: 8,
+        textShadow: "0 0 8px rgba(51,255,102,0.3)",
+      }}>
         THE CARE TRAIL
-      </text>
+      </div>
 
       {survived ? (
-        <text x={W / 2} y={80} textAnchor="middle" fontSize="7" fill="#88cc88" fontFamily={PIXEL_FONT}>
+        <div style={{
+          fontFamily: PIXEL_FONT,
+          fontSize: 14,
+          color: "#88cc88",
+          textAlign: "center",
+          marginTop: 12,
+        }}>
           {fm} SURVIVED.
-        </text>
+        </div>
       ) : (
-        <g>
-          <text x={W / 2} y={80} textAnchor="middle" fontSize="7" fill="#ff4444" fontFamily={PIXEL_FONT}>
+        <div style={{ textAlign: "center", marginTop: 12 }}>
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: 14, color: "#ff4444" }}>
             {fm} DIDN'T MAKE IT.
-          </text>
-          <text x={W / 2} y={98} textAnchor="middle" fontSize="5" fill="#884444" fontFamily={PIXEL_FONT}>
+          </div>
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: 10, color: "#884444", marginTop: 6 }}>
             THE CONDITION WAS TREATABLE.
-          </text>
-        </g>
+          </div>
+        </div>
       )}
 
       {/* Stats row */}
-      <rect x={20} y={112} width={W - 40} height={68} fill={PANEL_BG} rx={4} stroke={BORDER} strokeWidth={1} />
-
-      <text x={70} y={134} textAnchor="middle" fontSize="8" fill="#ff6666" fontFamily={PIXEL_FONT}>
-        ${totalCost}
-      </text>
-      <text x={70} y={148} textAnchor="middle" fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>
-        TOTAL COST
-      </text>
-
-      <text x={W / 2} y={134} textAnchor="middle" fontSize="8" fill="#aaaacc" fontFamily={PIXEL_FONT}>
-        {stats.days}
-      </text>
-      <text x={W / 2} y={148} textAnchor="middle" fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>
-        DAYS
-      </text>
-
-      <text x={290} y={134} textAnchor="middle" fontSize="8"
-        fill={stats.health > 50 ? GREEN : stats.health > 0 ? "#ccaa33" : "#ff4444"} fontFamily={PIXEL_FONT}>
-        {stats.health}
-      </text>
-      <text x={290} y={148} textAnchor="middle" fontSize="4" fill="#558855" fontFamily={PIXEL_FONT}>
-        HEALTH
-      </text>
-
-      <text x={W / 2} y={172} textAnchor="middle" fontSize="4.5" fill={stats.profile.color} fontFamily={PIXEL_FONT}>
-        {stats.profile.name} · {stats.profile.insuranceShort}
-      </text>
+      <div style={{
+        background: PANEL_BG,
+        border: `1px solid ${BORDER}`,
+        borderRadius: 4,
+        padding: "14px",
+        marginTop: 16,
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center" }}>
+          <div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 16, color: "#ff6666" }}>${totalCost}</div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855", marginTop: 4 }}>TOTAL COST</div>
+          </div>
+          <div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 16, color: "#aaaacc" }}>{stats.days}</div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855", marginTop: 4 }}>DAYS</div>
+          </div>
+          <div>
+            <div style={{
+              fontFamily: PIXEL_FONT,
+              fontSize: 16,
+              color: stats.health > 50 ? GREEN : stats.health > 0 ? "#ccaa33" : "#ff4444",
+            }}>
+              {stats.health}
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#558855", marginTop: 4 }}>HEALTH</div>
+          </div>
+        </div>
+        <div style={{
+          fontFamily: PIXEL_FONT,
+          fontSize: 9,
+          color: stats.profile.color,
+          textAlign: "center",
+          marginTop: 10,
+        }}>
+          {stats.profile.name} · {stats.profile.insuranceShort}
+        </div>
+      </div>
 
       {/* Phase 1: "Every obstacle is real" */}
       {phase >= 1 && (
-        <g>
-          <rect x={20} y={192} width={W - 40} height={54} fill="#1a1a0a" rx={4} stroke="#3a3a1a" strokeWidth={1} />
-          <text x={W / 2} y={214} textAnchor="middle" fontSize="5" fill="#ccaa44" fontFamily={PIXEL_FONT}>
-            EVERY OBSTACLE IN THIS GAME
-          </text>
-          <text x={W / 2} y={230} textAnchor="middle" fontSize="5" fill="#ccaa44" fontFamily={PIXEL_FONT}>
-            IS REAL. EVERY COST IS BASED ON
-          </text>
-          <text x={W / 2} y={240} textAnchor="middle" fontSize="5" fill="#ccaa44" fontFamily={PIXEL_FONT}>
-            ACTUAL NC HEALTHCARE DATA.
-          </text>
-        </g>
+        <div style={{
+          background: "#1a1a0a",
+          border: "1px solid #3a3a1a",
+          borderRadius: 4,
+          padding: "12px 14px",
+          marginTop: 14,
+          textAlign: "center",
+        }}>
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: 10, color: "#ccaa44", lineHeight: "2" }}>
+            EVERY OBSTACLE IN THIS GAME IS REAL. EVERY COST IS BASED ON ACTUAL NC HEALTHCARE DATA.
+          </div>
+        </div>
       )}
 
       {/* Phase 2: Random stat */}
       {phase >= 2 && (
-        <g>
-          <rect x={20} y={258} width={W - 40} height={20 + statLines.length * 14} fill="#1a0a0a" rx={4} stroke="#3a1a1a" strokeWidth={1} />
-          {statLines.map((sl, i) => (
-            <text key={i} x={W / 2} y={276 + i * 14} textAnchor="middle" fontSize="5" fill="#ff8866" fontFamily={PIXEL_FONT}>
-              {sl.toUpperCase()}
-            </text>
-          ))}
-        </g>
+        <div style={{
+          background: "#1a0a0a",
+          border: "1px solid #3a1a1a",
+          borderRadius: 4,
+          padding: "12px 14px",
+          marginTop: 14,
+          textAlign: "center",
+        }}>
+          <div style={{ fontFamily: PIXEL_FONT, fontSize: 10, color: "#ff8866", lineHeight: "2" }}>
+            {statRef.current.toUpperCase()}
+          </div>
+        </div>
       )}
 
       {/* Phase 3: CTAs */}
       {phase >= 3 && (
-        <g>
+        <div>
           {/* Bill breakdown */}
           {stats.billItems.length > 0 && (
-            <g>
-              <rect x={20} y={310 + statLines.length * 14} width={W - 40}
-                height={20 + stats.billItems.length * 14 + 18}
-                fill="#0a0a0a" rx={3} stroke="#333" strokeWidth={1} />
-              <text x={30} y={326 + statLines.length * 14} fontSize="4.5" fill="#888888" fontFamily={PIXEL_FONT}>
+            <div style={{
+              background: "#0a0a0a",
+              border: "1px solid #333",
+              borderRadius: 3,
+              padding: "12px 14px",
+              marginTop: 14,
+            }}>
+              <div style={{
+                fontFamily: PIXEL_FONT,
+                fontSize: 9,
+                color: "#888888",
+                marginBottom: 8,
+              }}>
                 YOUR BILLS:
-              </text>
+              </div>
               {stats.billItems.map((item, i) => (
-                <g key={i}>
-                  <text x={30} y={342 + statLines.length * 14 + i * 14} fontSize="4" fill={GREEN} fontFamily={PIXEL_FONT}>
-                    {item.name}
-                  </text>
-                  <text x={W - 30} y={342 + statLines.length * 14 + i * 14} textAnchor="end" fontSize="4" fill="#ff6666" fontFamily={PIXEL_FONT}>
-                    ${item.cost}
-                  </text>
-                </g>
+                <div key={i} style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 6,
+                }}>
+                  <span style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: GREEN }}>{item.name}</span>
+                  <span style={{ fontFamily: PIXEL_FONT, fontSize: 8, color: "#ff6666" }}>${item.cost}</span>
+                </div>
               ))}
-            </g>
+            </div>
           )}
 
-          {(() => {
-            const billBlockH = stats.billItems.length > 0 ? 20 + stats.billItems.length * 14 + 24 : 0;
-            const ctaY = 316 + statLines.length * 14 + billBlockH;
-            return (
-              <g>
-                {/* Campaign link */}
-                <a href="https://andycantwin.com" target="_blank" rel="noopener noreferrer">
-                  <g cursor="pointer">
-                    <rect x={20} y={ctaY} width={W - 40} height={50} rx={4}
-                      fill="#0d1a2a" stroke="#336699" strokeWidth={2} />
-                    <text x={W / 2} y={ctaY + 20} textAnchor="middle" fontSize="5" fill="#6699cc" fontFamily={PIXEL_FONT}>
-                      ANDY BOWLINE · NC SENATE · DISTRICT 31
-                    </text>
-                    <text x={W / 2} y={ctaY + 38} textAnchor="middle" fontSize="6" fill="#88bbee" fontFamily={PIXEL_FONT}>
-                      CAN'T WIN. YET.
-                    </text>
-                  </g>
-                </a>
+          {/* Campaign link */}
+          <a
+            href="https://andycantwin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "block",
+              background: "#0d1a2a",
+              border: "2px solid #336699",
+              borderRadius: 4,
+              padding: "12px 14px",
+              marginTop: 14,
+              textAlign: "center",
+              textDecoration: "none",
+            }}
+          >
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: "#6699cc", marginBottom: 6 }}>
+              ANDY BOWLINE · NC SENATE · DISTRICT 31
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 12, color: "#88bbee" }}>
+              CAN'T WIN. YET.
+            </div>
+          </a>
 
-                {/* Share + Play Again */}
-                <g cursor="pointer" onClick={shareResult}>
-                  <rect x={20} y={ctaY + 62} width={150} height={30} rx={3}
-                    fill="#dd6644" stroke="#ee7755" strokeWidth={1} />
-                  <text x={95} y={ctaY + 82} textAnchor="middle" fontSize="9" fill="#fff" fontFamily={PIXEL_FONT}>
-                    SHARE
-                  </text>
-                </g>
-                <g cursor="pointer" onClick={() => window.location.reload()}>
-                  <rect x={180} y={ctaY + 62} width={160} height={30} rx={3}
-                    fill="#1a4a1a" stroke={GREEN} strokeWidth={1} />
-                  <text x={260} y={ctaY + 82} textAnchor="middle" fontSize="8" fill={GREEN} fontFamily={PIXEL_FONT}>
-                    PLAY AGAIN
-                  </text>
-                </g>
+          {/* Share + Play Again */}
+          <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+            <button
+              onClick={shareResult}
+              style={{
+                flex: "0 0 auto",
+                fontFamily: PIXEL_FONT,
+                fontSize: 14,
+                color: "#fff",
+                background: "#dd6644",
+                border: "1px solid #ee7755",
+                borderRadius: 3,
+                padding: "8px 20px",
+                cursor: "pointer",
+                minHeight: 44,
+              }}
+            >
+              SHARE
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                flex: 1,
+                fontFamily: PIXEL_FONT,
+                fontSize: 14,
+                color: GREEN,
+                background: "#1a4a1a",
+                border: `1px solid ${GREEN}`,
+                borderRadius: 3,
+                padding: "8px 16px",
+                cursor: "pointer",
+                minHeight: 44,
+              }}
+            >
+              PLAY AGAIN
+            </button>
+          </div>
 
-                {/* Donate */}
-                <a href="https://secure.actblue.com/donate/andybowline" target="_blank" rel="noopener noreferrer">
-                  <g cursor="pointer">
-                    <rect x={20} y={ctaY + 104} width={W - 40} height={40} rx={3}
-                      fill="#1a3a1a" stroke="#3a6a3a" strokeWidth={1.5} />
-                    <text x={W / 2} y={ctaY + 120} textAnchor="middle" fontSize="5" fill="#88dd88" fontFamily={PIXEL_FONT}>
-                      CHIP IN $5 TO FIX THE SYSTEM
-                    </text>
-                    <text x={W / 2} y={ctaY + 136} textAnchor="middle" fontSize="8" fill="#44ff44" fontFamily={PIXEL_FONT}>
-                      DONATE →
-                    </text>
-                  </g>
-                </a>
+          {/* Donate */}
+          <a
+            href="https://secure.actblue.com/donate/andybowline"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "block",
+              background: "#1a3a1a",
+              border: "1.5px solid #3a6a3a",
+              borderRadius: 3,
+              padding: "10px 14px",
+              marginTop: 14,
+              textAlign: "center",
+              textDecoration: "none",
+            }}
+          >
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 9, color: "#88dd88", marginBottom: 4 }}>
+              CHIP IN $5 TO FIX THE SYSTEM
+            </div>
+            <div style={{ fontFamily: PIXEL_FONT, fontSize: 14, color: "#44ff44" }}>
+              DONATE →
+            </div>
+          </a>
 
-                {/* Source */}
-                <text x={W / 2} y={ctaY + 162} textAnchor="middle" fontSize="3.5" fill="#334433" fontFamily={PIXEL_FONT}>
-                  KFF · CENSUS BUREAU · NC DHHS · COMMONWEALTH FUND
-                </text>
-              </g>
-            );
-          })()}
-        </g>
+          {/* Source */}
+          <div style={{
+            fontFamily: PIXEL_FONT,
+            fontSize: 7,
+            color: "#334433",
+            textAlign: "center",
+            marginTop: 14,
+            paddingBottom: 16,
+          }}>
+            KFF · CENSUS BUREAU · NC DHHS · COMMONWEALTH FUND
+          </div>
+        </div>
       )}
-    </svg>
+    </div>
   );
 }
 
