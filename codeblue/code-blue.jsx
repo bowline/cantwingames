@@ -7,7 +7,7 @@ const GAME_W = 360;
 const GAME_H = 740;
 
 // ─── Constants ───
-const METER_RATE = 3; // % per second (CONSTANT across all levels)
+const DEFAULT_METER_RATE = 3; // % per second
 const SCROLL_SPEED = 300; // px per second
 const COLLISION_PENALTY = 12; // % added on hit
 const LANE_WIDTH = 60;
@@ -26,6 +26,7 @@ const LEVELS = [
     population: "350,000",
     hospitalDist: "0.8 mi",
     hospitalDistance: 800,
+    meterRate: 3, // % per second
     spawnInterval: 1200, // frequent but level is short
     obstacles: ["taxi", "pedestrian", "redlight"],
     envType: "urban",
@@ -38,7 +39,8 @@ const LEVELS = [
     name: "SUBURBAN",
     population: "45,000",
     hospitalDist: "4.2 mi",
-    hospitalDistance: 5000,
+    hospitalDistance: 3000, // ~10s drive
+    meterRate: 3,
     spawnInterval: 700, // ~1.4/s — tense dodging
     obstacles: ["suv", "construction", "schoolzone", "stalled", "deliveryvan"],
     envType: "suburban",
@@ -52,8 +54,9 @@ const LEVELS = [
     population: "2,100",
     hospitalDist: "47 mi",
     hospitalDistance: Infinity,
-    spawnInterval: 1800, // more frequent than before — occasional clusters break up the emptiness
-    obstacles: ["tractor", "deer", "loggingtruck", "gravel"],
+    meterRate: 5, // faster drain — death in ~20s
+    spawnInterval: 1200, // frequent enough to keep you dodging
+    obstacles: ["tractor", "deer", "loggingtruck", "gravel", "pothole"],
     envType: "rural",
     lanes: 3,
     completionText: "You didn't make it.",
@@ -61,16 +64,20 @@ const LEVELS = [
   },
 ];
 
-// Rural landmarks that appear at set distances
+// Rural landmarks — ~6000px total distance in 20s at 300px/s
 const RURAL_LANDMARKS = [
-  { dist: 600, type: "church" },
-  { dist: 1800, type: "closedgas" },
-  { dist: 3200, type: "hospitalsign" },
-  { dist: 4800, type: "dollargeneral" },
-  { dist: 6500, type: "dollargeneral2" },
-  { dist: 8500, type: "church2" },
-  { dist: 10500, type: "closedgas2" },
-  { dist: 12000, type: "hospitalsign2" },
+  { dist: 300, type: "church" },
+  { dist: 800, type: "closedgas" },
+  { dist: 1300, type: "closedclinic" },
+  { dist: 1800, type: "hospitalsign" },
+  { dist: 2300, type: "dollargeneral" },
+  { dist: 2800, type: "church2" },
+  { dist: 3300, type: "closedgas2" },
+  { dist: 3800, type: "dollargeneral2" },
+  { dist: 4300, type: "closedclinic2" },
+  { dist: 4800, type: "hospitalsign2" },
+  { dist: 5300, type: "closedgas3" },
+  { dist: 5800, type: "dollargeneral3" },
 ];
 
 // Random stats for end screen
@@ -80,6 +87,24 @@ const RANDOM_STATS = [
   "Heart attack survival drops 7-10% for every 10 minutes without treatment.",
   "In Stokes County, nearest cardiac cath lab is in Winston-Salem -- 45 min away.",
   "Rural Americans are 40% more likely to die of heart disease than urban Americans.",
+  "33 of NC's 100 counties have no hospital with an emergency department.",
+  "Rural NC counties have 2x the stroke death rate of urban counties.",
+  "NC has lost 1 in 4 rural OB units since 2010. Some mothers drive 100+ miles to deliver.",
+  "Rural counties average 5 physicians per 10,000 people. Urban counties average 32.",
+  "Average EMS response time in rural NC: 14 minutes. Urban: 5 minutes.",
+  "Rural Americans are 25% more likely to die of cancer — largely due to distance from treatment.",
+];
+
+// Dispatch radio messages that appear during rural level (~20s total)
+const RURAL_DISPATCH = [
+  { time: 1.5, text: "DISPATCH: NEAREST ER IS 47 MILES OUT" },
+  { time: 4, text: "NO HELICOPTER AVAILABLE IN THIS COUNTY" },
+  { time: 6.5, text: "THIS COUNTY HAS NO CARDIOLOGIST" },
+  { time: 9, text: "NEAREST CARDIAC CATH LAB: 45 MIN AWAY" },
+  { time: 11.5, text: "33 NC COUNTIES HAVE NO HOSPITAL ER" },
+  { time: 14, text: "RURAL EMS RESPONSE: 14 MIN. URBAN: 5." },
+  { time: 16.5, text: "SAME HEART ATTACK. DIFFERENT ZIP CODE." },
+  { time: 18.5, text: "YOU'RE NOT GOING TO MAKE IT." },
 ];
 
 // ─── Obstacle definitions ───
@@ -109,6 +134,8 @@ function getObstacleDef(type) {
       return { w: 30, h: 60, label: "LOG" };
     case "gravel":
       return { w: 50, h: 16, label: "GRVL" };
+    case "pothole":
+      return { w: 30, h: 18, label: "HOLE" };
     default:
       return { w: 24, h: 30, label: "?" };
   }
@@ -253,6 +280,14 @@ function ObstacleSprite({ obs }) {
           {[5, 15, 25, 35, 42].map((gx, i) => (
             <circle key={i} cx={gx} cy={8 + (i % 2) * 3 - 1} r={2 + (i % 3)} fill="#998877" opacity={0.8} />
           ))}
+        </g>
+      );
+    case "pothole":
+      return (
+        <g transform={`translate(${x - 15}, ${y - 9})`}>
+          <ellipse cx={15} cy={9} rx={15} ry={9} fill="#1a1a2a" stroke="#3a3a4a" strokeWidth={1} />
+          <ellipse cx={15} cy={9} rx={10} ry={6} fill="#0a0a14" />
+          <ellipse cx={15} cy={7} rx={12} ry={4} fill="none" stroke="#4a4a5a" strokeWidth={0.5} />
         </g>
       );
     default:
@@ -427,12 +462,35 @@ function LandmarkSprite({ type, x, y }) {
       );
     case "dollargeneral":
     case "dollargeneral2":
+    case "dollargeneral3":
       return (
         <g transform={`translate(${x}, ${y})`}>
           <rect x={0} y={6} width={40} height={24} fill="#2a2a2a" stroke="#444444" strokeWidth={0.5} />
           <rect x={0} y={0} width={40} height={10} fill="#ddcc22" />
           <text x={20} y={8} textAnchor="middle" fontSize="5" fill="#222" fontFamily={PIXEL_FONT}>$G</text>
           <rect x={14} y={16} width={12} height={14} fill="#444433" />
+        </g>
+      );
+    case "closedclinic":
+    case "closedclinic2":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          <rect x={0} y={8} width={38} height={22} fill="#2a2a2a" stroke="#444444" strokeWidth={0.5} />
+          <rect x={0} y={0} width={38} height={10} fill="#334444" stroke="#445555" strokeWidth={0.5} />
+          <text x={19} y={7} textAnchor="middle" fontSize="3.5" fill="#668888" fontFamily={PIXEL_FONT}>CLINIC</text>
+          <line x1={2} y1={2} x2={36} y2={28} stroke="#aa4444" strokeWidth={1.5} />
+          <line x1={36} y1={2} x2={2} y2={28} stroke="#aa4444" strokeWidth={1.5} />
+          <rect x={12} y={16} width={14} height={14} fill="#1a1a1a" />
+        </g>
+      );
+    case "closedgas3":
+      return (
+        <g transform={`translate(${x}, ${y})`}>
+          <rect x={0} y={10} width={36} height={20} fill="#3a3a3a" stroke="#555555" strokeWidth={0.5} />
+          <rect x={-4} y={0} width={44} height={12} fill="#444444" stroke="#555555" strokeWidth={0.5} />
+          <text x={18} y={9} textAnchor="middle" fontSize="4" fill="#aa4444" fontFamily={PIXEL_FONT}>CLOSED</text>
+          <rect x={8} y={14} width={8} height={14} fill="#2a2a2a" rx={1} />
+          <rect x={20} y={14} width={8} height={14} fill="#2a2a2a" rx={1} />
         </g>
       );
     default:
@@ -1051,7 +1109,7 @@ function EndScreen({ levelResults, onRestart, onShare }) {
         <div
           style={{
             fontFamily: PIXEL_FONT,
-            fontSize: "20px",
+            fontSize: "26px",
             color: "#ff4444",
             marginBottom: "8px",
             textShadow: "3px 3px 0px #330000",
@@ -1059,7 +1117,7 @@ function EndScreen({ levelResults, onRestart, onShare }) {
         >
           FLATLINE
         </div>
-        <div style={{ fontFamily: PIXEL_FONT, fontSize: "12px", color: "#555566" }}>
+        <div style={{ fontFamily: PIXEL_FONT, fontSize: "14px", color: "#555566" }}>
           &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;
         </div>
       </div>
@@ -1085,10 +1143,10 @@ function EndScreen({ levelResults, onRestart, onShare }) {
             const statusText = !played ? "—" : survived ? "\u2665 SURVIVED" : "\u2717 DECEASED";
             const timeText = !played ? "—" : survived ? lvl.treatmentTime : "-- min";
             return (
-              <div key={lvl.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: i < LEVELS.length - 1 ? "10px" : "0" }}>
-                <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#8888aa" }}>{lvl.name}:</span>
-                <span style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color }}>{statusText}</span>
-                <span style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: survived ? "#ccccdd" : "#555566" }}>{timeText}</span>
+              <div key={lvl.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: i < LEVELS.length - 1 ? "12px" : "0" }}>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: "9px", color: "#8888aa" }}>{lvl.name}:</span>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: "10px", color }}>{statusText}</span>
+                <span style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color: survived ? "#ccccdd" : "#555566" }}>{timeText}</span>
               </div>
             );
           })}
@@ -1101,7 +1159,7 @@ function EndScreen({ levelResults, onRestart, onShare }) {
           <div
             style={{
               fontFamily: PIXEL_FONT,
-              fontSize: "8px",
+              fontSize: "11px",
               color: "#ccccdd",
               lineHeight: "2.2",
               marginBottom: "6px",
@@ -1114,7 +1172,7 @@ function EndScreen({ levelResults, onRestart, onShare }) {
           <div
             style={{
               fontFamily: PIXEL_FONT,
-              fontSize: "7px",
+              fontSize: "9px",
               color: "#ff8866",
               lineHeight: "2",
             }}
@@ -1141,9 +1199,9 @@ function EndScreen({ levelResults, onRestart, onShare }) {
           <div
             style={{
               fontFamily: PIXEL_FONT,
-              fontSize: "6.5px",
+              fontSize: "8px",
               color: "#ddaa33",
-              lineHeight: "2",
+              lineHeight: "2.2",
               textAlign: "center",
             }}
           >
@@ -1183,13 +1241,13 @@ function EndScreen({ levelResults, onRestart, onShare }) {
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#5a8a5a")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#3a5a3a")}
             >
-              <div style={{ fontFamily: PIXEL_FONT, fontSize: "9px", color: "#ffaa44", marginBottom: "4px" }}>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "11px", color: "#ffaa44", marginBottom: "4px" }}>
                 ANDY BOWLINE
               </div>
-              <div style={{ fontFamily: PIXEL_FONT, fontSize: "5.5px", color: "#88aa88", marginBottom: "2px" }}>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#88aa88", marginBottom: "2px" }}>
                 NC SENATE · DISTRICT 31
               </div>
-              <div style={{ fontFamily: PIXEL_FONT, fontSize: "7px", color: "#ff8866" }}>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "9px", color: "#ff8866" }}>
                 CAN'T WIN. YET.
               </div>
             </div>
@@ -1253,10 +1311,10 @@ function EndScreen({ levelResults, onRestart, onShare }) {
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#5a9a5a")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#3a6a3a")}
             >
-              <div style={{ fontFamily: PIXEL_FONT, fontSize: "5px", color: "#88dd88", marginBottom: "4px" }}>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "6.5px", color: "#88dd88", marginBottom: "4px" }}>
                 RURAL NC NEEDS YOUR HELP
               </div>
-              <div style={{ fontFamily: PIXEL_FONT, fontSize: "8px", color: "#44ff44" }}>
+              <div style={{ fontFamily: PIXEL_FONT, fontSize: "10px", color: "#44ff44" }}>
                 CHIP IN TO FIGHT FOR RURAL HEALTHCARE
               </div>
             </div>
@@ -1297,6 +1355,9 @@ export default function CodeBlue() {
   const hospitalVisibleRef = useRef(false);
   const hitFlashRef = useRef(0);
   const levelRef = useRef(LEVELS[0]);
+  const dispatchIndexRef = useRef(0);
+  const dispatchMsgRef = useRef(null); // { text, fadeIn, opacity }
+  const elapsedRef = useRef(0);
 
   useEffect(() => {
     gameStateRef.current = gameState;
@@ -1384,7 +1445,7 @@ export default function CodeBlue() {
       playerXRef.current = Math.max(ROAD_LEFT + 16, Math.min(ROAD_RIGHT - 16, playerXRef.current));
 
       // ─── Increment meter ───
-      meterRef.current += METER_RATE * dt;
+      meterRef.current += (level.meterRate || DEFAULT_METER_RATE) * dt;
 
       // ─── Increment distance ───
       distanceRef.current += SCROLL_SPEED * dt;
@@ -1486,6 +1547,25 @@ export default function CodeBlue() {
         });
       }
 
+      // ─── Dispatch radio messages (rural) ───
+      elapsedRef.current += dt;
+      if (level.envType === "rural" && dispatchIndexRef.current < RURAL_DISPATCH.length) {
+        const nextMsg = RURAL_DISPATCH[dispatchIndexRef.current];
+        if (elapsedRef.current >= nextMsg.time) {
+          dispatchMsgRef.current = { text: nextMsg.text, opacity: 1, timer: 2.5 };
+          dispatchIndexRef.current++;
+        }
+      }
+      if (dispatchMsgRef.current) {
+        dispatchMsgRef.current.timer -= dt;
+        if (dispatchMsgRef.current.timer <= 0.5) {
+          dispatchMsgRef.current.opacity = Math.max(0, dispatchMsgRef.current.timer / 0.5);
+        }
+        if (dispatchMsgRef.current.timer <= 0) {
+          dispatchMsgRef.current = null;
+        }
+      }
+
       // ─── Move obstacles + collision ───
       const px = playerXRef.current;
       const py = 560; // Player fixed Y position
@@ -1559,6 +1639,9 @@ export default function CodeBlue() {
     envObjectsRef.current = generateEnvObjects(level.envType);
     landmarksRef.current = [];
     landmarkIndexRef.current = 0;
+    dispatchIndexRef.current = 0;
+    dispatchMsgRef.current = null;
+    elapsedRef.current = 0;
     setGameState("playing");
   }, [currentLevel]);
 
@@ -1614,6 +1697,7 @@ export default function CodeBlue() {
   const hospitalVisible = hospitalVisibleRef.current;
   const landmarks = landmarksRef.current;
   const envObjects = envObjectsRef.current;
+  const dispatchMsg = dispatchMsgRef.current;
   const playerY = 560;
 
   return (
@@ -1745,6 +1829,23 @@ export default function CodeBlue() {
 
             {/* Survival meter */}
             <SurvivalMeter percent={meter} />
+
+            {/* Dispatch radio message (rural level) */}
+            {dispatchMsg && dispatchMsg.opacity > 0 && (
+              <g opacity={dispatchMsg.opacity}>
+                <rect x={10} y={GAME_H - 90} width={GAME_W - 56} height={36} rx={3}
+                  fill="rgba(0,0,0,0.85)" stroke="#ff4444" strokeWidth={1} />
+                <rect x={12} y={GAME_H - 88} width={4} height={8} rx={1} fill="#ff4444">
+                  <animate attributeName="opacity" values="1;0.3;1" dur="0.6s" repeatCount="indefinite" />
+                </rect>
+                <text x={22} y={GAME_H - 78} fontSize="4.5" fill="#ff6666" fontFamily={PIXEL_FONT} letterSpacing="1">
+                  RADIO
+                </text>
+                <text x={20} y={GAME_H - 63} fontSize="5.5" fill="#ffcccc" fontFamily={PIXEL_FONT}>
+                  {dispatchMsg.text}
+                </text>
+              </g>
+            )}
 
             {/* Touch hint at start */}
             {distanceRef.current < 200 && (
