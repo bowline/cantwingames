@@ -83,16 +83,16 @@ const RURAL_LANDMARKS = [
 // Random stats for end screen
 const RANDOM_STATS = [
   "Since 2010, 8 rural hospitals in North Carolina have closed.",
-  "The average rural NC resident lives 30+ minutes from the nearest ER.",
+  "Many rural NC residents live 30+ minutes from the nearest ER.",
   "Heart attack survival drops 7-10% for every 10 minutes without treatment.",
-  "In Stokes County, nearest cardiac cath lab is in Winston-Salem -- 45 min away.",
-  "Rural Americans are 40% more likely to die of heart disease than urban Americans.",
+  "In Stokes County, nearest cardiac cath lab is in Winston-Salem -- 40 min away.",
+  "Rural Americans are 40% more likely to develop heart disease than urban Americans.",
   "Over 300 rural hospitals nationwide are at risk of closing due to funding cuts.",
-  "Rural NC counties have 2x the stroke death rate of urban counties.",
-  "NC has lost 1 in 4 rural OB units since 2010. Some mothers drive 100+ miles to deliver.",
-  "Rural counties average 5 physicians per 10,000 people. Urban counties average 32.",
-  "Average EMS response time in rural NC: 14 minutes. Urban: 5 minutes.",
-  "Rural Americans are 25% more likely to die of cancer — largely due to distance from treatment.",
+  "20 NC counties are maternity care deserts -- zero obstetric providers.",
+  "8 NC rural hospitals lost maternity services since 2010. Some mothers drive 100+ miles to deliver.",
+  "Rural areas average 5 primary care doctors per 10,000 people. Urban areas average 8.",
+  "Average EMS response time in rural areas: 14 minutes. Urban: 7 minutes.",
+  "Rural Americans have a 15% higher cancer death rate than urban Americans.",
 ];
 
 // Dispatch radio messages that appear during rural level (~20s total)
@@ -100,9 +100,9 @@ const RURAL_DISPATCH = [
   { time: 1.5, text: "DISPATCH: NEAREST ER IS 47 MILES OUT" },
   { time: 4, text: "NO HELICOPTER AVAILABLE IN THIS COUNTY" },
   { time: 6.5, text: "THIS COUNTY HAS NO CARDIOLOGIST" },
-  { time: 9, text: "NEAREST CARDIAC CATH LAB: 45 MIN AWAY" },
+  { time: 9, text: "NEAREST CARDIAC CATH LAB: 40 MIN AWAY" },
   { time: 11.5, text: "8 RURAL NC HOSPITALS CLOSED SINCE 2010" },
-  { time: 14, text: "RURAL EMS RESPONSE: 14 MIN. URBAN: 5." },
+  { time: 14, text: "RURAL EMS RESPONSE: 14 MIN. URBAN: 7." },
   { time: 16.5, text: "SAME HEART ATTACK. DIFFERENT ZIP CODE." },
   { time: 18.5, text: "YOU'RE NOT GOING TO MAKE IT." },
 ];
