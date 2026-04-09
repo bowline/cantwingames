@@ -82,12 +82,12 @@ const RURAL_LANDMARKS = [
 
 // Random stats for end screen
 const RANDOM_STATS = [
-  "Since 2010, 7 rural hospitals in North Carolina have closed.",
+  "Since 2010, 8 rural hospitals in North Carolina have closed.",
   "The average rural NC resident lives 30+ minutes from the nearest ER.",
   "Heart attack survival drops 7-10% for every 10 minutes without treatment.",
   "In Stokes County, nearest cardiac cath lab is in Winston-Salem -- 45 min away.",
   "Rural Americans are 40% more likely to die of heart disease than urban Americans.",
-  "33 of NC's 100 counties have no hospital with an emergency department.",
+  "Over 300 rural hospitals nationwide are at risk of closing due to funding cuts.",
   "Rural NC counties have 2x the stroke death rate of urban counties.",
   "NC has lost 1 in 4 rural OB units since 2010. Some mothers drive 100+ miles to deliver.",
   "Rural counties average 5 physicians per 10,000 people. Urban counties average 32.",
@@ -101,7 +101,7 @@ const RURAL_DISPATCH = [
   { time: 4, text: "NO HELICOPTER AVAILABLE IN THIS COUNTY" },
   { time: 6.5, text: "THIS COUNTY HAS NO CARDIOLOGIST" },
   { time: 9, text: "NEAREST CARDIAC CATH LAB: 45 MIN AWAY" },
-  { time: 11.5, text: "33 NC COUNTIES HAVE NO HOSPITAL ER" },
+  { time: 11.5, text: "8 RURAL NC HOSPITALS CLOSED SINCE 2010" },
   { time: 14, text: "RURAL EMS RESPONSE: 14 MIN. URBAN: 5." },
   { time: 16.5, text: "SAME HEART ATTACK. DIFFERENT ZIP CODE." },
   { time: 18.5, text: "YOU'RE NOT GOING TO MAKE IT." },
