@@ -1069,6 +1069,7 @@ function LevelComplete({ level, meterPercent, onContinue }) {
 // ─── End screen (after Level 3 death) ───
 function EndScreen({ levelResults, onRestart, onShare }) {
   const [phase, setPhase] = useState(0);
+  const [stat] = useState(() => RANDOM_STATS[Math.floor(Math.random() * RANDOM_STATS.length)]);
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase(1), 800);
@@ -1083,7 +1084,6 @@ function EndScreen({ levelResults, onRestart, onShare }) {
     };
   }, []);
 
-  const stat = RANDOM_STATS[Math.floor(Math.random() * RANDOM_STATS.length)];
   const deathResult = levelResults.find((r) => !r.survived);
   const diedOnLevel = deathResult ? deathResult.level : null;
 
