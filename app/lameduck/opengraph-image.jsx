@@ -163,23 +163,56 @@ export default async function Image() {
               }} />
             </div>
 
-            {/* plain working duck */}
-            <div style={{ display: "flex", position: "relative", width: "60px", height: "70px" }}>
+            {/* BERGER — gold crown boss duck (Senate Pro Tem, lost by 23 votes) */}
+            <div style={{ display: "flex", position: "relative", width: "60px", height: "82px", marginTop: "-12px" }}>
+              {/* name chip above */}
+              <div style={{
+                position: "absolute", top: "-2px", left: "4px",
+                width: "52px", height: "12px",
+                background: "#ffd23f", border: "1.5px solid #8a6914",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <div style={{ fontFamily: pixel, fontSize: "7px", color: "#1a0a2e", display: "flex" }}>BERGER</div>
+              </div>
+              {/* crown base */}
+              <div style={{
+                position: "absolute", width: "22px", height: "5px", background: "#8a6914",
+                top: "22px", left: "16px", display: "flex",
+              }} />
+              {/* crown spikes (three triangles) */}
+              <div style={{
+                position: "absolute", width: "8px", height: "8px", background: "#ffd23f",
+                top: "14px", left: "15px", clipPath: "polygon(50% 0, 0 100%, 100% 100%)", display: "flex",
+              }} />
+              <div style={{
+                position: "absolute", width: "8px", height: "12px", background: "#ffd23f",
+                top: "10px", left: "23px", clipPath: "polygon(50% 0, 0 100%, 100% 100%)", display: "flex",
+              }} />
+              <div style={{
+                position: "absolute", width: "8px", height: "8px", background: "#ffd23f",
+                top: "14px", left: "31px", clipPath: "polygon(50% 0, 0 100%, 100% 100%)", display: "flex",
+              }} />
+              {/* red gem */}
+              <div style={{
+                position: "absolute", width: "5px", height: "5px", background: "#c62828",
+                top: "17px", left: "24px", borderRadius: "50%", display: "flex",
+              }} />
+              {/* body */}
               <div style={{
                 position: "absolute", width: "36px", height: "32px", background: "#ffd23f",
                 bottom: "8px", left: "10px", borderRadius: "50%", display: "flex",
               }} />
               <div style={{
                 position: "absolute", width: "22px", height: "22px", background: "#ffd23f",
-                top: "14px", left: "22px", borderRadius: "50%", display: "flex",
+                top: "26px", left: "22px", borderRadius: "50%", display: "flex",
               }} />
               <div style={{
                 position: "absolute", width: "4px", height: "4px", background: "#1a1a1a",
-                top: "20px", left: "34px", borderRadius: "50%", display: "flex",
+                top: "32px", left: "34px", borderRadius: "50%", display: "flex",
               }} />
               <div style={{
                 position: "absolute", width: "14px", height: "6px", background: "#ff8a00",
-                top: "22px", left: "42px", display: "flex",
+                top: "34px", left: "42px", display: "flex",
               }} />
               <div style={{
                 position: "absolute", width: "6px", height: "16px", background: "#c62828",
@@ -209,7 +242,7 @@ export default async function Image() {
               display: "flex",
             }}
           >
-            NC GENERAL ASSEMBLY
+            NC SHORT SESSION · 2026
           </div>
 
           <div
@@ -252,7 +285,7 @@ export default async function Image() {
               display: "flex",
             }}
           >
-            30 SECONDS · NO WINNERS
+            30 SECONDS · REMIND THEM
           </div>
         </div>
 
