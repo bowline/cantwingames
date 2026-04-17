@@ -6,7 +6,7 @@ const PIXEL_FONT = `var(--font-pixel), "Press Start 2P", monospace`;
 
 // ─── game dimensions ───
 const GAME_W = 360;
-const GAME_H = 640;
+const GAME_H = 740;
 const DOOR_X = GAME_W / 2 - 70;
 const DOOR_Y = 60;
 const DOOR_W = 140;
@@ -835,7 +835,7 @@ export default function LameDuck() {
 
   return (
     <div style={{
-      width: "100%", maxWidth: `${GAME_W}px`, margin: "0 auto",
+      width: "100%", maxWidth: "440px", margin: "0 auto",
       fontFamily: PIXEL_FONT, userSelect: "none", WebkitUserSelect: "none",
     }}>
       {screen === "title" && <TitleScreen onStart={startGame} personalBest={personalBest} />}
